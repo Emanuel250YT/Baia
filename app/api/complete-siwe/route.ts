@@ -7,7 +7,7 @@ interface IRequestPayload {
   nonce: string
 }
 
-export const POST = async (req: NextRequest) => {
+export async function POST(req: NextRequest) {
   const { payload, nonce } = (await req.json()) as IRequestPayload
   if (nonce != cookies().get('siwe')?.value) {
     return NextResponse.json({
