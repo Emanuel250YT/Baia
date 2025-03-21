@@ -6,11 +6,25 @@ import { uploadFileToAWS } from "@/lib/awsManager";
 import connectDatabase from "@/lib/connectDatabase";
 import { formToObject } from "@/lib/formTransforms";
 import { sanitizeModel } from "@/lib/sanitize";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function POST(req: NextRequest) {
 
+
+
+  const session = await getServerSession(authOptions)
+
+  if (!session && process.env.ENV != "development") return new APIResponse({
+    body: {},
+    code: APICodes[401],
+    message: APIMessages.UnAuthorized,
+    status: APIStatus.Unauthorized
+  }).response()
+
   await connectDatabase()
+
 
   const formBody = await req.formData().catch(err => {
     if (err) return false

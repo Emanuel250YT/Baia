@@ -1,6 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   providers: [
@@ -29,7 +29,7 @@ const authOptions: NextAuthOptions = {
       return true;
     },
   },
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.ENV === "development",
 };
 
 const handler = NextAuth(authOptions);
