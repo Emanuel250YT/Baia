@@ -8,7 +8,7 @@ import { formToObject } from "@/lib/formTransforms";
 import { sanitizeModel } from "@/lib/sanitize";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 export async function POST(req: NextRequest) {
 
