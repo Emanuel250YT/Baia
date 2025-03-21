@@ -1,6 +1,7 @@
 import { APICodes, APIMessages, APIResponse, APIStatus } from "@/classes/APIResponses";
-import { ZCauseCreate } from "@/classes/Cause";
+import { ZValidationCreate } from "@/classes/Validation";
 import CauseModel from "@/database/Cause";
+import ValidationModel from "@/database/Validation";
 import { uploadFileToAWS } from "@/lib/awsManager";
 import connectDatabase from "@/lib/connectDatabase";
 import { formToObject } from "@/lib/formTransforms";
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
   })
 
   const body = await formToObject(formBody)
-  const parsedBody = ZCauseCreate.safeParse(body)
+  const parsedBody = ZValidationCreate.safeParse(body)
 
   if (!body || !parsedBody.success) return new APIResponse({
     code: APICodes[400],
@@ -25,10 +26,7 @@ export async function POST(req: NextRequest) {
     status: APIStatus.BadRequest
   }).response()
 
-
   parsedBody.data.images = body["images"]
-  parsedBody.data.profile = body["profile"]
-
 
   if (!parsedBody.success) return new APIResponse({
     code: APICodes[400],
@@ -43,27 +41,28 @@ export async function POST(req: NextRequest) {
     uuid: crypto.randomUUID().toString(),
   }
 
+  const dbCause = await CauseModel.findOne({ uuid: finalBody.cause }).catch(err => {
+    if (err) return false
+  })
+
+  if (!dbCause) return new APIResponse({
+    body: {},
+    code: APICodes[404],
+    message: APIMessages.NotFound,
+    status: APIStatus.NotFound
+  }).response()
+
   //@ts-ignore
   finalBody.images = await Promise.all([].concat(body["images"]).map(async (value: File) => {
     return await uploadFileToAWS(value)
   }))
 
-  //@ts-ignore
-  finalBody.profile = await uploadFileToAWS(body["profile"] || "") || ""
-  //@ts-ignore
-  finalBody.fundsLimit = 0
-  //@ts-ignore
-  finalBody.verificationLevel = 0;
 
-  //@ts-ignore
-  finalBody.detail = {}
-
-
-  const cause = await CauseModel.create(finalBody).catch(err => {
+  const validation = await ValidationModel.create(finalBody).catch(err => {
     if (err) return false
   })
 
-  if (!cause) return new APIResponse({
+  if (!validation) return new APIResponse({
     body: {},
     code: APICodes[500],
     message: APIMessages.InternalServerError,
@@ -71,5 +70,5 @@ export async function POST(req: NextRequest) {
   }).response()
 
 
-  return NextResponse.json(sanitizeModel(cause))
+  return NextResponse.json(sanitizeModel(validation))
 }
