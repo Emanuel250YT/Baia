@@ -17,8 +17,9 @@ const CauseSchema: Schema = new Schema<ICause>({
   fundsLimit: { type: Number },
   verificationLevel: String,
   detail: Object,
-  wallet: String
-
+  wallet: String,
+  funds: { type: Number, default: 0 },
+  validations: { type: Number, default: 0 }
 });
 
 CauseSchema.plugin(mongoosePaginate)
