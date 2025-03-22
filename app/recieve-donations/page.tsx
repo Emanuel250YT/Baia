@@ -12,12 +12,14 @@ import { disasters } from "@/data/disasters";
 import { MiniKit } from "@worldcoin/minikit-js";
 import Subtitle from "@/components/Text/Subtitle";
 import { GetWalletSession } from "@/utils/GetWalletSession";
+import { redirect } from "next/navigation";
 
 export default function RecieveDonations() {
   const [name, setName] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [cause, setCause] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
 
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
@@ -41,6 +43,7 @@ export default function RecieveDonations() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
 
     await GetWalletSession()
 
@@ -58,18 +61,17 @@ export default function RecieveDonations() {
       formData.append("profile", profilePhoto);
     }
 
-    // lossPhotos.forEach((photo, index) => {
-    //   formData.append(`images`, photo);
-    // });
-
     lossPhotos.forEach((photo, index) => {
       formData.append(`images`, photo);
     });
 
     try {
       const response = await CreateCause(formData);
+      redirect("/success-recieve");
     } catch (error) {
       return; // handle catch error
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -106,8 +108,9 @@ export default function RecieveDonations() {
             className="w-full px-3 py-2 border border-gray-300 text-gray-400 rounded-2xl text-left bg-[rgba(0,0,0,0.05)]"
             value={cause}
             onChange={(e) => setCause(e.target.value)}
+            defaultValue={"default"}
           >
-            <option selected>¿Causa de tu pérdida?</option>
+            <option value="default">¿Causa de tu pérdida?</option>
             {disasters.map((disaster, index) => (
               <option key={index} value={disaster.id}>
                 {disaster.emoji} {disaster.label}
@@ -241,8 +244,9 @@ export default function RecieveDonations() {
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
           <PillButton
-            label="Enviar solicitud de fondos"
+            label={submitting ? "Enviando..." : "Enviar solicitud de fondos"}
             action={handleSubmit}
+            submitting={submitting}
           ></PillButton>
         </div>
       </section>
