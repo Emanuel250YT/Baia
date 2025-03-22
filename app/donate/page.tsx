@@ -154,8 +154,6 @@ export default function Donate() {
               id={cause.uuid}
               name={cause.owner}
               createdAt={cause.createdAt}
-              funds={cause.funds}
-              fundsLimit={cause.fundsLimit}
               cause={cause.cause}
               place={cause.place}
               image={cause.profile || "/placeholder.png"}

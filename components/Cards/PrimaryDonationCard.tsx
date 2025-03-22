@@ -8,8 +8,6 @@ interface props {
   image: string;
   name: string;
   createdAt: number;
-  funds: number;
-  fundsLimit: number;
   place: string;
   cause: string;
   collected: number;
@@ -21,15 +19,13 @@ export default function PrimaryDonationCard({
   image,
   name,
   createdAt,
-  funds,
-  fundsLimit,
   cause,
   collected,
   goal,
   place,
   validations,
 }: props) {
-  const [progressPercentage] = useState<number>((funds / fundsLimit) * 100);
+  const [progressPercentage] = useState<number>((collected / goal) * 100);
   const [disaster, setDisaster] = useState<{
     label: string;
     emoji: string;

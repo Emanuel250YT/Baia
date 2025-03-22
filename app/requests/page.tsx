@@ -5,14 +5,65 @@ import PrimaryRequestCard from "@/components/Cards/PrimaryRequestCard";
 import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
 import { disasters } from "@/data/disasters";
+import { MiniKit } from "@worldcoin/minikit-js";
 import Image from "next/image";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
-export default function Donate() {
-  const [selectedFilter, setSelectedFilter] = useState<string>("Urgente");
+export default function Request() {
+  const [wallet, setWallet] = useState<string | null>(null);
 
-  const handleFilterClick = (filter: string) => {
-    setSelectedFilter(filter);
+  useEffect(() => {
+    const fetchWallet = async () => {
+      const address = await GetWalletSession();
+      if (address) {
+        setWallet(address);
+      }
+    };
+    fetchWallet();
+  }, []);
+
+  const GetWalletSession = async (): Promise<string | null> => {
+    if (!MiniKit.isInstalled()) {
+      console.warn("MiniKit no está instalado.");
+      return null;
+    }
+
+    try {
+      const res = await fetch(`/api/nonce`);
+      const { nonce } = await res.json();
+
+      const { commandPayload: generateMessageResult, finalPayload } =
+        await MiniKit.commandsAsync.walletAuth({
+          nonce,
+          requestId: "0",
+          expirationTime: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+          notBefore: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+          statement: "This is my statement and here is a link https://worldcoin.com/apps",
+        });
+
+      if (finalPayload.status === "error") {
+        console.error("Error en la autenticación de la wallet.");
+        return null;
+      }
+
+      const response = await fetch("/api/complete-siwe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ payload: finalPayload, nonce }),
+      });
+
+      if (!response.ok) {
+        console.error("Fallo al completar la autenticación en el servidor.");
+        return null;
+      }
+
+      return finalPayload.address || null;
+    } catch (error) {
+      console.error("Error al obtener la dirección de la wallet:", error);
+      return null;
+    }
   };
 
   return (
@@ -22,7 +73,7 @@ export default function Donate() {
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <PrimaryRequestCard
           createdAt={new Date().getTime()}
-          cause={disasters.find((d) => d.id == "flood")}
+          cause={"flood"}
           place="Bahia Blanca"
           collected={0}
           goal={100}
