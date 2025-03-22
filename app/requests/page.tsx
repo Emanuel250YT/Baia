@@ -19,9 +19,9 @@ export default function Request() {
     fetchWallet();
   }, []);
 
-  const fetchCauses = async () => {
-    const request = await fetch(`/api/causes/${wallet}`);
-    console.log("wallet", wallet);
+  const fetchCauses = async (_wallet: string) => {
+    const request = await fetch(`/api/causes/${_wallet}`);
+    console.log("wallet", _wallet);
     if (request.status === 200) {
       const data = await request.json();
       console.log(data.body);
@@ -36,7 +36,7 @@ export default function Request() {
     const address = await GetWalletSession();
     if (address) {
       setWallet(address);
-      await fetchCauses();
+      await fetchCauses(address);
     }
 
     setLoading(false);
