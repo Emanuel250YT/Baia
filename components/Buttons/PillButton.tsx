@@ -5,7 +5,7 @@ interface PillButtonInterface {
   bgColor?: string;
   textColor?: string;
   link?: string;
-  action?: () => void;
+  action?: (e: React.FormEvent) => void;
 }
 
 export default function PilLButton({
@@ -22,7 +22,7 @@ export default function PilLButton({
         color: textColor ? textColor : "#FFFFFF",
       }}
       onClick={action}
-      className="py-3 rounded-2xl text-center"
+      className="py-3 rounded-2xl text-center w-full flex-1"
     >
       {label}
     </button>
@@ -33,7 +33,7 @@ export default function PilLButton({
         backgroundColor: bgColor ? bgColor : "#783BE3",
         color: textColor ? textColor : "#FFFFFF",
       }}
-      className="py-3 rounded-2xl text-center"
+      className="py-3 rounded-2xl text-center w-full flex-1"
     >
       {label}
     </Link>

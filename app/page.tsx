@@ -18,9 +18,9 @@ export default function Home() {
       </section>
       <section className="relative w-[90%] mx-auto px-6 flex flex-col gap-y-6">
         <div className="flex flex-col gap-y-4">
-          <PillButton label="Donar" link="/donar"></PillButton>
+          <PillButton label="Donar" link="/donate"></PillButton>
 
-          <PillButton label="Recibir donaciones"></PillButton>
+          <PillButton label="Recibir donaciones" link="/recieve-donations"></PillButton>
         </div>
 
         <button className="text-gray-700 text-[18px] underline">
