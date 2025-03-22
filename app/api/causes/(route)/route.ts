@@ -108,7 +108,7 @@ export async function GET(req: NextRequest) {
 
   const paginationConfiguration = {
     page: page ? parseInt(page) : 1,
-    amountPerPage: amountPerPage ? parseInt(amountPerPage) : 10,
+    limit: amountPerPage ? parseInt(amountPerPage) : 10,
   }
   let query: { [key: string]: any } = {}
 
@@ -129,6 +129,7 @@ export async function GET(req: NextRequest) {
         [key: string]: string
       }
     }
+
 
     console.log(paginationConfiguration, query)
 
