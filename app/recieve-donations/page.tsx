@@ -42,17 +42,21 @@ export default function RecieveDonations() {
     console.log("submit");
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("location", location);
+    formData.append("owner", name);
+    formData.append("place", location);
     formData.append("cause", cause);
     formData.append("description", description);
 
     if (profilePhoto) {
-      formData.append("profilePhoto", profilePhoto);
+      formData.append("profile", profilePhoto);
     }
 
+    // lossPhotos.forEach((photo, index) => {
+    //   formData.append(`images`, photo);
+    // });
+
     lossPhotos.forEach((photo, index) => {
-      formData.append(`lossPhotos[${index}]`, photo);
+      formData.append(`images`, photo);
     });
 
     try {

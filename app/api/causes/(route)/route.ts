@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
   const body = await formToObject(formBody)
   const parsedBody = ZCauseCreate.safeParse(body)
 
+
   if (!body || !parsedBody.success) return new APIResponse({
     code: APICodes[400],
     body: {},
@@ -58,8 +59,10 @@ export async function POST(req: NextRequest) {
     uuid: crypto.randomUUID().toString(),
   }
 
+
+
   //@ts-ignore
-  finalBody.images = await Promise.all([].concat(body["images"]).map(async (value: File) => {
+  finalBody.images = await Promise.all(([].concat(body["images"])).map(async (value: File) => {
     return await uploadFileToAWS(value)
   }))
 
@@ -76,10 +79,15 @@ export async function POST(req: NextRequest) {
   //@ts-ignore
   finalBody.creationIndex = await CauseModel.countDocuments() + 1
 
+  console.log(finalBody)
 
 
   const cause = await CauseModel.create(finalBody).catch(err => {
-    if (err) return false
+    if (err) {
+      console.log(err)
+
+      return false
+    }
   })
 
   if (!cause) return new APIResponse({

@@ -33,11 +33,16 @@ export const ZCauseCreate = z.object({
   }),
   cause: z.string(),
   wallet: z.string(),
-  images: z.array(z.object({
+  images: z.union([z.array(z.object({
     size: z.number(),
     type: z.string(),
     name: z.string(),
     lastModified: z.number(),
-  })),
+  })), z.object({
+    size: z.number(),
+    type: z.string(),
+    name: z.string(),
+    lastModified: z.number(),
+  })]),
 })
 
