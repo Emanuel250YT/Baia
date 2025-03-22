@@ -3,7 +3,7 @@
 import PillButton from "@/components/Buttons/PillButton";
 import Image from "next/image";
 
-export default function SuccessDonation() {
+export default function Home() {
   return (
     <main className="bg-brand-purple flex min-h-screen flex-col items-center justify-evenly gap-y-3 text-black text-[22px]">
       <section className="relative w-[90%] mx-auto px-6 flex flex-col items-center gap-10">
@@ -14,7 +14,8 @@ export default function SuccessDonation() {
         <Image src="/success.png" width={72} height={72} alt="" />
 
         <div className="flex flex-col gap-4 text-white text-[18px]">
-          <p>🎉 ¡Donación realizada con éxito!</p>
+          <p>🎉 ¡Felicidades! Validaste correctamente el pedido de Julián.</p>
+
           <p>🙌 Gracias por ser parte de esta red de ayuda y apoyo.</p>
         </div>
       </section>
