@@ -1,6 +1,5 @@
 import { APIResponse, APICodes, APIMessages, APIStatus } from "@/classes/APIResponses";
-import CauseModel from "@/database/Cause";
-import ValidationModel from "@/database/Validation";
+import DonationModel from "@/database/Donation";
 import { authOptions } from "@/lib/authOptions";
 import connectDatabase from "@/lib/connectDatabase";
 import { sanitizeModel } from "@/lib/sanitize";
@@ -28,7 +27,7 @@ export async function GET(req: NextRequest) {
     status: APIStatus.NotFound
   }).response()
 
-  const dbDonation = await ValidationModel.find({
+  const dbDonation = await DonationModel.find({
     wallet: id
   })
 
