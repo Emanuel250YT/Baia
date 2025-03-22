@@ -72,6 +72,9 @@ export async function POST(req: NextRequest) {
   //@ts-ignore
   finalBody.detail = {}
 
+  //@ts-ignore
+  finalBody.creationIndex = await CauseModel.countDocuments() + 1
+
 
   const cause = await CauseModel.create(finalBody).catch(err => {
     if (err) return false
