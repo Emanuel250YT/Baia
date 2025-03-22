@@ -19,15 +19,8 @@ export default function Donate() {
     async function fetchCauses() {
       setLoading(true);
 
-      const isValidPriority =
-        selectedFilter && selectedFilter in PrioritiesKeys;
-
-      const filter = isValidPriority
-        ? { priority: selectedFilter as keyof typeof PrioritiesKeys }
-        : undefined;
-
       const request = await fetch(
-        `/api/causes?page=1&limit=1&${filter ? `priority=${filter}` : ""}`
+        `/api/causes?page=1&limit=1${selectedFilter ? `&priority=${selectedFilter}` : ""}`
       );
       if (request.status === 200) {
         const data = await request.json();
@@ -52,17 +45,17 @@ export default function Donate() {
             <FilterPill
               label="Mayor % recaudado"
               isSelected={selectedFilter === "Mayor % recaudado"}
-              onClick={() => handleFilterClick("Mayor % recaudado")}
+              onClick={() => handleFilterClick(PrioritiesKeys.MajorGoal)}
             />
             <FilterPill
               label="Menor % recaudado"
               isSelected={selectedFilter === "Menor % recaudado"}
-              onClick={() => handleFilterClick("Menor % recaudado")}
+              onClick={() => handleFilterClick(PrioritiesKeys.MinorGoal)}
             />
             <FilterPill
               label="Necesidades primarias"
               isSelected={selectedFilter === "Necesidades primarias"}
-              onClick={() => handleFilterClick("Necesidades primarias")}
+              onClick={() => handleFilterClick(PrioritiesKeys.Primary)}
             />
           </div>
 
@@ -70,17 +63,17 @@ export default function Donate() {
             <FilterPill
               label="Necesidades secundarias"
               isSelected={selectedFilter === "Necesidades secundarias"}
-              onClick={() => handleFilterClick("Necesidades secundarias")}
+              onClick={() => handleFilterClick(PrioritiesKeys.Secondary)}
             />
             <FilterPill
               label="Mas validados"
               isSelected={selectedFilter === "Mas validados"}
-              onClick={() => handleFilterClick("Mas validados")}
+              onClick={() => handleFilterClick(PrioritiesKeys.MostValidated)}
             />
             <FilterPill
               label="Menos validados"
               isSelected={selectedFilter === "Menos validados"}
-              onClick={() => handleFilterClick("Menos validados")}
+              onClick={() => handleFilterClick(PrioritiesKeys.PoorValidated)}
             />
           </div>
 
@@ -88,17 +81,17 @@ export default function Donate() {
             <FilterPill
               label="Más reciente"
               isSelected={selectedFilter === "Más reciente"}
-              onClick={() => handleFilterClick("Más reciente")}
+              onClick={() => handleFilterClick(PrioritiesKeys.Recent)}
             />
             <FilterPill
               label="Más antiguo"
               isSelected={selectedFilter === "Más antiguo"}
-              onClick={() => handleFilterClick("Más antiguo")}
+              onClick={() => handleFilterClick(PrioritiesKeys.Oldest)}
             />
             <FilterPill
               label="Urgente"
               isSelected={selectedFilter === "Urgente"}
-              onClick={() => handleFilterClick("Urgente")}
+              onClick={() => handleFilterClick(PrioritiesKeys.Important)}
             />
           </div>
         </div>
