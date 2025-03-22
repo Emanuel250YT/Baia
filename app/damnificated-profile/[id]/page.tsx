@@ -7,6 +7,7 @@ import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
 import { VerifyCauseOrb } from "@/components/Verify";
 import { disasters } from "@/data/disasters";
+import { GetWalletSession } from "@/utils/GetWalletSession";
 import { MiniKit } from "@worldcoin/minikit-js";
 import Image from "next/image";
 
@@ -83,52 +84,6 @@ export default function DamnificatedProfile() {
     setLoading(false);
   };
 
-  const GetWalletSession = async (): Promise<string | null> => {
-    if (!MiniKit.isInstalled()) {
-      console.warn("MiniKit no está instalado.");
-      return null;
-    }
-
-    try {
-      const res = await fetch(`/api/nonce`);
-      const { nonce } = await res.json();
-
-      const { commandPayload: generateMessageResult, finalPayload } =
-        await MiniKit.commandsAsync.walletAuth({
-          nonce,
-          requestId: "0",
-          expirationTime: new Date(
-            new Date().getTime() + 7 * 24 * 60 * 60 * 1000
-          ),
-          notBefore: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
-          statement:
-            "This is my statement and here is a link https://worldcoin.com/apps",
-        });
-
-      if (finalPayload.status === "error") {
-        console.error("Error en la autenticación de la wallet.");
-        return null;
-      }
-
-      const response = await fetch("/api/complete-siwe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ payload: finalPayload, nonce }),
-      });
-
-      if (!response.ok) {
-        console.error("Fallo al completar la autenticación en el servidor.");
-        return null;
-      }
-
-      return finalPayload.address || null;
-    } catch (error) {
-      console.error("Error al obtener la dirección de la wallet:", error);
-      return null;
-    }
-  };
 
   const getDisasterInfo = (id: string) => {
     const disaster = disasters.find((disaster) => disaster.id === id);
