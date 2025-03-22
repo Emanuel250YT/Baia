@@ -3,7 +3,6 @@ import { IAPIResponse } from "@/classes/APIResponses"
 export async function GetBaseData(path: string): Promise<IAPIResponse | null> {
   const authCookie = document.cookie
 
-  console.log(authCookie)
 
   const data = await fetch(path, {
     headers: {
