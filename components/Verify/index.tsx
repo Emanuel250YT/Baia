@@ -17,7 +17,7 @@ export type VerifyCommandInput = {
 
 
 
-export const VerifyBlock = (cause: string) => {
+export const VerifyBlock = ({ cause }: { cause: string }) => {
 
   const verifyPayload: VerifyCommandInput = {
     action: "validate-action", // This is your action ID from the Developer Portal

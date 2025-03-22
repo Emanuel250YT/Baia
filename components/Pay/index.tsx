@@ -10,7 +10,7 @@ const sendPayment = async (_wallet: string, _cause: string, _amount: number) => 
   try {
     const res = await fetch(`/api/initiate-payment`, {
       method: "POST",
-      body: JSON.stringify({ wallet: _wallet, cause: _cause, _amount: _amount })
+      body: JSON.stringify({ wallet: _wallet, cause: _cause, amount: Number(_amount) })
     });
 
 
