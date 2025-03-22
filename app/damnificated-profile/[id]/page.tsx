@@ -405,20 +405,6 @@ interface ItemRowProps {
 }
 
 function ItemRow({ icon, name, forPeople, amount }: ItemRowProps) {
-  const formatAmount = (amount: number): string => {
-    if (amount >= 1_000_000) {
-      return (
-        (amount / 1_000_000)
-          .toFixed(
-            amount % 1_000_000 === 0 ? 0 : amount % 100_000 === 0 ? 1 : 3
-          )
-          .replace(/\.00$/, "") + "M"
-      );
-    } else {
-      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-  };
-
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
@@ -431,7 +417,7 @@ function ItemRow({ icon, name, forPeople, amount }: ItemRowProps) {
         )} */}
       </div>
       <div className="bg-black text-white px-2 py-1 rounded-full flex items-center text-xs whitespace-nowrap">
-        <span className="text-amber-400 mr-0.5">💰</span>${formatAmount(amount)}
+        <span className="text-amber-400 mr-0.5">💰</span>${convertUsdToArs(amount)}
       </div>
     </div>
   );

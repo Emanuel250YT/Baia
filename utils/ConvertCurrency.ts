@@ -1,3 +1,5 @@
+import { formatAmount } from "./FormatAmount";
+
 const API_URL = "https://dolarapi.com/v1/dolares/blue";
 
 async function fetchExchangeRate() {
@@ -16,5 +18,5 @@ export async function convertUsdToArs(amount: number) {
     return null;
   }
   const exchangeRate = await fetchExchangeRate();
-  return amount * exchangeRate;
+  return formatAmount(amount * exchangeRate);
 }
