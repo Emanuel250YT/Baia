@@ -8,6 +8,7 @@ export interface IValidation {
   images: string[];
   createdAt: number;
   description: string;
+  realValidation: string;
 }
 
 export const ZValidationCreate = z.object({

@@ -19,7 +19,8 @@ const CauseSchema: Schema = new Schema<ICause>({
   detail: Object,
   wallet: String,
   funds: { type: Number, default: 0 },
-  validations: { type: Number, default: 0 }
+  validations: { type: Number, default: 0 },
+  creationIndex: { type: Number, default: 0 }
 });
 
 CauseSchema.plugin(mongoosePaginate)
