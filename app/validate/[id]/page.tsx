@@ -5,7 +5,11 @@ import PillButton from "@/components/Buttons/PillButton";
 import Navbar from "@/components/Navigation/Navbar";
 import Image from "next/image";
 
+import { useParams } from "next/navigation";
+
 export default function Validate() {
+  const params = useParams<{ id: string }>();
+
   const [comment, setComment] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
 
