@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 import MiniKitProvider from "@/components/minikit-provider";
 import dynamic from "next/dynamic";
 import NextAuthProvider from "@/components/next-auth-provider";
 
-const inter = Inter({ subsets: ["latin"] });
+const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Baia - Ayuda a damnificados",
@@ -25,7 +25,7 @@ export default function RootLayout({
   );
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${nunito.className} max-w-screen`}>
         <NextAuthProvider>
           <ErudaProvider>
             <MiniKitProvider>

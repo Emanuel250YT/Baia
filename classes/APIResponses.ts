@@ -6,6 +6,7 @@ export const APIMessages = {
   UnAuthorized: "Unauthorized",
   BadRequest: "Bad request",
   InternalServerError: "Internal error",
+  NotFound: "Not found",
 }
 
 export type APIMessagesType = typeof APIMessages[keyof typeof APIMessages];
@@ -21,7 +22,8 @@ export const APICodes = {
   200: 200,
   400: 400,
   500: 500,
-  401: 401
+  401: 401,
+  404: 404
 }
 
 export type APICodesType = typeof APICodes[keyof typeof APICodes];
@@ -41,7 +43,8 @@ export const APIStatus = {
   Success: "Success",
   InternalServerError: "Internal server error",
   Unauthorized: "Unauthorized",
-  OK: "OK"
+  OK: "OK",
+  NotFound: "Not found",
 }
 
 export type APIStatusType = typeof APIStatus[keyof typeof APIStatus];

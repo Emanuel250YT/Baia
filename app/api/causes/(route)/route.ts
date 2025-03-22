@@ -5,9 +5,22 @@ import { uploadFileToAWS } from "@/lib/awsManager";
 import connectDatabase from "@/lib/connectDatabase";
 import { formToObject } from "@/lib/formTransforms";
 import { sanitizeModel } from "@/lib/sanitize";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "@/lib/authOptions";
 
 export async function POST(req: NextRequest) {
+
+  const session = await getServerSession(authOptions)
+
+  console.log(process.env.ENV)
+
+  if (!session && process.env.ENV != "development") return new APIResponse({
+    body: {},
+    code: APICodes[401],
+    message: APIMessages.UnAuthorized,
+    status: APIStatus.Unauthorized
+  }).response()
 
   await connectDatabase()
 
@@ -43,7 +56,8 @@ export async function POST(req: NextRequest) {
     uuid: crypto.randomUUID().toString(),
   }
 
-  finalBody.images = await Promise.all(body["images"].map(async (value: File) => {
+  //@ts-ignore
+  finalBody.images = await Promise.all([].concat(body["images"]).map(async (value: File) => {
     return await uploadFileToAWS(value)
   }))
 
