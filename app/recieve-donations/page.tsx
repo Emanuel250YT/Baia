@@ -8,6 +8,8 @@ import { X } from "lucide-react";
 import { PostBaseData } from "@/requests/baseMethod";
 import { CreateCause } from "@/requests/causes/methods";
 
+import { disasters } from "@/data/disasters";
+
 export default function RecieveDonations() {
   const [name, setName] = useState<string>("");
   const [location, setLocation] = useState<string>("");
@@ -53,11 +55,10 @@ export default function RecieveDonations() {
       formData.append(`lossPhotos[${index}]`, photo);
     });
 
-
     try {
-      const response = await CreateCause(formData)
+      const response = await CreateCause(formData);
 
-      console.log(response)
+      console.log(response);
     } catch (error) {
       return; // handle catch error
     }
@@ -91,6 +92,11 @@ export default function RecieveDonations() {
             onChange={(e) => setCause(e.target.value)}
           >
             <option selected>¿Causa de tu pérdida?</option>
+            {disasters.map((disaster, index) => (
+              <option key={index} value={disaster.id}>
+                {disaster.emoji} {disaster.label}
+              </option>
+            ))}
           </select>
         </div>
       </section>
@@ -157,6 +163,8 @@ export default function RecieveDonations() {
           <textarea
             className="w-full min-h-64 px-5 py-4 border border-gray-300 text-gray-500 rounded-2xl text-left bg-[rgba(0,0,0,0.05)]"
             placeholder="Descripción del caso..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           ></textarea>
         </div>
       </section>
