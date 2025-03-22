@@ -6,7 +6,8 @@ export interface IDonation {
   uuid: string;
   cause: string;
   wallet: string;
-  createdAt: number
+  createdAt: number,
+  verified: boolean;
 }
 
 export const ZDonationCreate = z.object({

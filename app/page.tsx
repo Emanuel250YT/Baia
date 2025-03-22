@@ -27,6 +27,7 @@ export default function Home() {
           Cerrar sesión
         </button>
 
+        <PayBlock></PayBlock>
         {/* <div className="flex flex-col gap-y-4">
           <PillButton label="Iniciar sesión"></PillButton>
         </div> */}
