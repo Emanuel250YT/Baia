@@ -17,7 +17,7 @@ const CauseSchema: Schema = new Schema<ICause>({
   fundsLimit: { type: Number },
   verificationLevel: String,
   detail: Object,
-  wallet: String,
+  wallet: { type: String, default: "0x427cc9d8e489287c221d4c75edd446723ee0e1a0", required: true },
   funds: { type: Number, default: 0 },
   validations: { type: Number, default: 0 },
   creationIndex: { type: Number, default: 0 }

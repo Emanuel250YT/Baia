@@ -1,5 +1,5 @@
 
-import { GetBaseData } from "../baseMethod";
+import { GetBaseData, PostBaseData } from "../baseMethod";
 import { ICause } from "@/classes/Cause";
 import { PrioritiesKeys } from "@/data/causePriority";
 
@@ -12,6 +12,13 @@ export async function GetAllCauses(filter?: Filter): Promise<Array<ICause> | nul
   if (!causesData || causesData.code != 200) return null;
   return causesData.body as Array<ICause>;
 }
+
+export async function CreateCause(body: string | FormData) {
+  const causeData = await PostBaseData(process.env.NEXT_PUBLIC_API_WEB_BASE_URL! + "/causes", body)
+  if (!causeData || causeData.code != 200) return null
+  return causeData.body as ICause
+}
+
 
 const bundle = {
   GetAllCauses
