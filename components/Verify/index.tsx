@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import {
   MiniKit,
@@ -14,13 +15,17 @@ export type VerifyCommandInput = {
   verification_level?: VerificationLevel; // Default: Orb
 };
 
-const verifyPayload: VerifyCommandInput = {
-  action: "test-action", // This is your action ID from the Developer Portal
-  signal: "",
-  verification_level: VerificationLevel.Device, // Orb | Device
-};
 
-export const VerifyBlock = () => {
+
+export const VerifyBlock = (cause: string) => {
+
+  const verifyPayload: VerifyCommandInput = {
+    action: "validate-action", // This is your action ID from the Developer Portal
+    signal: cause,
+    verification_level: process.env.ENV == "production" ? VerificationLevel.Orb : VerificationLevel.Device, // Orb | Device
+  };
+
+
   const [handleVerifyResponse, setHandleVerifyResponse] = useState<
     MiniAppVerifyActionErrorPayload | IVerifyResponse | null
   >(null);
