@@ -7,6 +7,7 @@ import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
 import { VerifyCauseDevice, VerifyCauseOrb } from "@/components/Verify";
 import { disasters } from "@/data/disasters";
+import { convertUsdToArs } from "@/utils/ConvertCurrency";
 import { GetWalletSession } from "@/utils/GetWalletSession";
 import { MiniKit } from "@worldcoin/minikit-js";
 import Image from "next/image";
@@ -326,7 +327,7 @@ export default function DamnificatedProfile() {
                       💸 TOTAL ESTIMADO
                     </span>
                     <span className="text-brand-purple font-bold text-center text-[24px]">
-                      ${cause.fundsLimit} ARS
+                      ${convertUsdToArs(cause.fundsLimit)} ARS
                     </span>
                   </div>
                 </div>
@@ -339,7 +340,7 @@ export default function DamnificatedProfile() {
 
                 <div className="flex-1 w-full p-5 border border-gray-300 text-gray-700 rounded-2xl gap-3 space-y-3">
                   <h2 className="text-brand-purple font-bold text-center text-[24px]">
-                    ${cause.funds} ARS
+                    ${convertUsdToArs(cause.funds)} ARS
                   </h2>
                   <div className="flex-1 w-full h-4 bg-gray-200 rounded-full mb-2">
                     <div
@@ -348,8 +349,8 @@ export default function DamnificatedProfile() {
                     />
                   </div>
                   <div className="flex justify-between text-gray-500 text-xs">
-                    <div>{cause.funds} ARS</div>
-                    <div>{cause.fundsLimit} ARS</div>
+                    <div>{convertUsdToArs(cause.funds)} ARS</div>
+                    <div>{convertUsdToArs(cause.fundsLimit)} ARS</div>
                   </div>
                 </div>
               </div>
@@ -404,20 +405,6 @@ interface ItemRowProps {
 }
 
 function ItemRow({ icon, name, forPeople, amount }: ItemRowProps) {
-  const formatAmount = (amount: number): string => {
-    if (amount >= 1_000_000) {
-      return (
-        (amount / 1_000_000)
-          .toFixed(
-            amount % 1_000_000 === 0 ? 0 : amount % 100_000 === 0 ? 1 : 3
-          )
-          .replace(/\.00$/, "") + "M"
-      );
-    } else {
-      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-  };
-
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
@@ -430,7 +417,7 @@ function ItemRow({ icon, name, forPeople, amount }: ItemRowProps) {
         )} */}
       </div>
       <div className="bg-black text-white px-2 py-1 rounded-full flex items-center text-xs whitespace-nowrap">
-        <span className="text-amber-400 mr-0.5">💰</span>${formatAmount(amount)}
+        <span className="text-amber-400 mr-0.5">💰</span>${convertUsdToArs(amount)}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { disasters } from "@/data/disasters";
+import { convertUsdToArs } from "@/utils/ConvertCurrency";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -88,8 +89,8 @@ export default function PrimaryDonationCard({
                 />
               </div>
               <div className="flex justify-between text-gray-500 text-xs">
-                <div>{collected} ARS</div>
-                <div>{goal} ARS</div>
+                <div>{convertUsdToArs(collected)} ARS</div>
+                <div>{convertUsdToArs(goal)} ARS</div>
               </div>
             </div>
           </div>
