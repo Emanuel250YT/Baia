@@ -15,7 +15,9 @@ export interface ICause {
   verificationLevel: string;
   detail: object;
   wallet: string;
-  pendingValuation: boolean
+  pendingValuation: boolean,
+  funds: number,
+  validations: number
 }
 
 export const ZCauseCreate = z.object({
