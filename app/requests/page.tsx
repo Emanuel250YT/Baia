@@ -11,16 +11,27 @@ import { Fragment, useEffect, useState } from "react";
 
 export default function Request() {
   const [wallet, setWallet] = useState<string | null>(null);
+  const [causes, setCauses] = useState<Array<any>>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchWallet = async () => {
-      const address = await GetWalletSession();
-      if (address) {
-        setWallet(address);
-      }
-    };
     fetchWallet();
   }, []);
+
+  const fetchWallet = async (): Promise<void> => {
+    setLoading(true);
+    const address = await GetWalletSession();
+    if (address) {
+      setWallet(address);
+    }
+
+    const request = await fetch(`/api/causes${wallet}`);
+    if (request.status === 200) {
+      const data = await request.json();
+      setCauses(data.body);
+    }
+    setLoading(false);
+  };
 
   const GetWalletSession = async (): Promise<string | null> => {
     if (!MiniKit.isInstalled()) {
@@ -31,7 +42,7 @@ export default function Request() {
     try {
       const res = await fetch(`/api/nonce`);
       const { nonce } = await res.json();
-
+      
       const { commandPayload: generateMessageResult, finalPayload } =
         await MiniKit.commandsAsync.walletAuth({
           nonce,
@@ -71,14 +82,28 @@ export default function Request() {
       <Navbar title="Tus pedidos de ayuda" returnTo={"/"}></Navbar>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
-        <PrimaryRequestCard
-          createdAt={new Date().getTime()}
-          cause={"flood"}
-          place="Bahia Blanca"
-          collected={0}
-          goal={100}
-          validations={100}
-        ></PrimaryRequestCard>
+        {loading && !wallet ? (
+          "loading..."
+        ) : !loading && !wallet ? (
+          <>
+            <span>You need to accept the wallet. Try again</span>
+            <button className="underline" onClick={fetchWallet}>
+              Try again here
+            </button>
+          </>
+        ) : (
+          !loading &&
+          wallet && (
+            <PrimaryRequestCard
+              createdAt={new Date().getTime()}
+              cause={"flood"}
+              place="Bahia Blanca"
+              collected={0}
+              goal={100}
+              validations={100}
+            ></PrimaryRequestCard>
+          )
+        )}
       </section>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
@@ -103,23 +128,6 @@ export default function Request() {
   );
 }
 
-interface FilterPillProps {
-  label: string;
-  isSelected: boolean;
-  onClick: () => void;
-}
-
-function FilterPill({ label, isSelected, onClick }: FilterPillProps) {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 rounded-full text-sm border whitespace-nowrap border-gray-300 text-gray-700`}
-    >
-      {label}
-    </button>
-  );
-}
-
 interface NotificationProps {
   icon: string;
   label: string;
@@ -129,7 +137,9 @@ function Notification({ icon, label }: NotificationProps) {
   return (
     <div className="w-full px-5 py-4 border border-gray-300 text-gray-700 rounded-2xl flex gap-[5%] text-[20px]">
       <div className="flex items-center justify-center w-[22.5%]">
-        <span className="bg-brand-purple p-2 rounded-full">{icon}</span>
+        <span className="bg-brand-purple aspect-square p-2 rounded-full text-[20px]">
+          {icon}
+        </span>
       </div>
       <div className="flex items-center justify-center text-gray-500 text-xs w-[72.5%]">
         <span className="text-[15px]">{label}</span>
