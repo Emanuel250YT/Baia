@@ -5,7 +5,9 @@ import PillButton from "@/components/Buttons/PillButton";
 import ImageCarousel from "@/components/Carousels/Carousel";
 import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
+import { VerifyCauseOrb } from "@/components/Verify";
 import { disasters } from "@/data/disasters";
+import { MiniKit } from "@worldcoin/minikit-js";
 import Image from "next/image";
 
 import { redirect, useParams } from "next/navigation";
@@ -14,6 +16,7 @@ import { useEffect, useState } from "react";
 export default function DamnificatedProfile() {
   const { id } = useParams();
 
+  const [wallet, setWallet] = useState<string | null>("");
   const [cause, setCause] = useState<ICause | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -30,6 +33,10 @@ export default function DamnificatedProfile() {
   >([]);
 
   const [percentage, setPercentage] = useState<number>(0);
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
 
   useEffect(() => {
     if (!id) {
@@ -65,6 +72,63 @@ export default function DamnificatedProfile() {
 
     fetchCauses();
   }, [id]);
+
+  const fetchWallet = async (): Promise<void> => {
+    setLoading(true);
+    const address = await GetWalletSession();
+    if (address) {
+      setWallet(address);
+    }
+
+    setLoading(false);
+  };
+
+  const GetWalletSession = async (): Promise<string | null> => {
+    if (!MiniKit.isInstalled()) {
+      console.warn("MiniKit no está instalado.");
+      return null;
+    }
+
+    try {
+      const res = await fetch(`/api/nonce`);
+      const { nonce } = await res.json();
+
+      const { commandPayload: generateMessageResult, finalPayload } =
+        await MiniKit.commandsAsync.walletAuth({
+          nonce,
+          requestId: "0",
+          expirationTime: new Date(
+            new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+          ),
+          notBefore: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+          statement:
+            "This is my statement and here is a link https://worldcoin.com/apps",
+        });
+
+      if (finalPayload.status === "error") {
+        console.error("Error en la autenticación de la wallet.");
+        return null;
+      }
+
+      const response = await fetch("/api/complete-siwe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ payload: finalPayload, nonce }),
+      });
+
+      if (!response.ok) {
+        console.error("Fallo al completar la autenticación en el servidor.");
+        return null;
+      }
+
+      return finalPayload.address || null;
+    } catch (error) {
+      console.error("Error al obtener la dirección de la wallet:", error);
+      return null;
+    }
+  };
 
   const getDisasterInfo = (id: string) => {
     const disaster = disasters.find((disaster) => disaster.id === id);
@@ -359,10 +423,16 @@ export default function DamnificatedProfile() {
               </div>
             </section>
             <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-col flex-nowrap justify-start gap-1.5">
-              <PillButton label="Donar"></PillButton>
-              <PillButton
-                label={`Validar pedido de ${cause.owner}`}
-              ></PillButton>
+              {wallet == cause.wallet ? (
+                <VerifyCauseOrb cause={cause.uuid} />
+              ) : (
+                <div className="flex flex-col flex-nowrap justify-start gap-1 5">
+                  <PillButton label="Donar"></PillButton>
+                  <PillButton
+                    label={`Validar pedido de ${cause.owner}`}
+                  ></PillButton>
+                </div>
+              )}
             </section>
           </>
         )
