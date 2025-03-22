@@ -12,6 +12,14 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "purple-gradient":
+          "linear-gradient(86.67deg, #783BE3 -7.13%, #6028B5 92.13%)",
+      },
+      backgroundColor: {
+        "brand-purple": "#783BE3",
+      },
+      textColor: {
+        "brand-darkpurple": "#221044",
       },
     },
   },
