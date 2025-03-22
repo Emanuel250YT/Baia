@@ -29,7 +29,7 @@ export default function DamnificatedProfile() {
     { priority: string; totalCost: number; amount: number; name: string }[]
   >([]);
 
-  const [percentage, setPercentage] = useState<number>(0)
+  const [percentage, setPercentage] = useState<number>(0);
 
   useEffect(() => {
     if (!id) {
@@ -54,8 +54,9 @@ export default function DamnificatedProfile() {
         );
         setPrimaryItems(primary);
         setSecondaryItems(secondary);
-      
-        const progressPercentage = (data.body.funds / data.body.fundsLimit) * 100;
+
+        const progressPercentage =
+          (data.body.funds / data.body.fundsLimit) * 100;
 
         setPercentage(Math.min(progressPercentage, 100));
       }
@@ -74,7 +75,7 @@ export default function DamnificatedProfile() {
     <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
       {loading ? (
         <>
-          <Navbar title="Pedido #x" returnTo={"/donate"}></Navbar>
+          <Navbar title={`Pedido #00000`} returnTo={"/donate"}></Navbar>
 
           {/* Profile Section Skeleton */}
           <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
@@ -206,7 +207,10 @@ export default function DamnificatedProfile() {
       ) : (
         cause && (
           <>
-            <Navbar title="Pedido #x" returnTo={"/donate"}></Navbar>
+            <Navbar
+              title={`Pedido #${String(cause?.creationIndex).padStart(5, "0")}`}
+              returnTo="/donate"
+            />
             <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
               <div className="flex flex-nowrap gap-3">
                 <Image
@@ -356,7 +360,9 @@ export default function DamnificatedProfile() {
             </section>
             <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-col flex-nowrap justify-start gap-1.5">
               <PillButton label="Donar"></PillButton>
-              <PillButton label={`Validar pedido de ${cause.owner}`}></PillButton>
+              <PillButton
+                label={`Validar pedido de ${cause.owner}`}
+              ></PillButton>
             </section>
           </>
         )

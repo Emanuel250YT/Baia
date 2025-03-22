@@ -1,33 +1,51 @@
-import { IDisaster } from '@/data/disasters'
-import Image from 'next/image'
-import Link from 'next/link'
+import { disasters } from "@/data/disasters";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface props {
-  id: string,
-  image: string,
-  name: string,
-  createdAt: number,
-  place: string,
-  cause?: IDisaster,
-  collected: number,
-  goal: number,
-  validations: number
+  id: string;
+  image: string;
+  name: string;
+  createdAt: number;
+  funds: number;
+  fundsLimit: number;
+  place: string;
+  cause: string;
+  collected: number;
+  goal: number;
+  validations: number;
 }
 export default function PrimaryDonationCard({
   id,
   image,
   name,
   createdAt,
+  funds,
+  fundsLimit,
   cause,
   collected,
   goal,
   place,
-  validations
+  validations,
 }: props) {
-  return (
+  const [progressPercentage] = useState<number>((funds / fundsLimit) * 100);
+  const [disaster, setDisaster] = useState<{
+    label: string;
+    emoji: string;
+  } | null>(null);
 
+  const getDisasterInfo = (id: string) => {
+    const disaster = disasters.find((disaster) => disaster.id === id);
+    return disaster ? { label: disaster.label, emoji: disaster.emoji } : null;
+  };
+
+  useEffect(() => {
+    setDisaster(getDisasterInfo(cause));
+  }, [cause]);
+
+  return progressPercentage !== 100 ? (
     <>
-
       <div className="w-full py-5 border border-gray-300 text-gray-700 rounded-2xl">
         <div className="flex flex-col gap-2.5 px-5">
           <div className="flex flex-nowrap gap-3">
@@ -41,19 +59,23 @@ export default function PrimaryDonationCard({
             <div className="flex flex-col gap-1">
               <h2 className="text-[18px] font-semibold">{name}</h2>
               <p className="text-[14px]">
-                📅 Publicado el {new Date(createdAt).toLocaleDateString("es-ES")}
+                📅 Publicado el{" "}
+                {new Date(createdAt).toLocaleDateString("es-ES")}
                 <br />
                 📍 {place}
                 <br />
-                {cause && (
+                {disaster && (
                   <>
-                    {cause.emoji} {cause.label}
+                    {disaster.emoji} {disaster.label}
                   </>
                 )}
               </p>
             </div>
           </div>
-          <Link href={`/damnificated-profile/${id}`} className="bg-purple-gradient text-center rounded-full px-3 py-1.5 text-white">
+          <Link
+            href={`/damnificated-profile/${id}`}
+            className="bg-purple-gradient text-center rounded-full px-3 py-1.5 text-white"
+          >
             Donar
           </Link>
         </div>
@@ -66,7 +88,7 @@ export default function PrimaryDonationCard({
               <div className="w-full h-4 bg-gray-200 rounded-full mb-2">
                 <div
                   className="h-full bg-purple-gradient rounded-full"
-                  style={{ width: `50%` }}
+                  style={{ width: `${Math.min(progressPercentage, 100)}%` }}
                 />
               </div>
               <div className="flex justify-between text-gray-500 text-xs">
@@ -77,10 +99,12 @@ export default function PrimaryDonationCard({
           </div>
           <div className="relative w-[37.5%] text-center">
             <h3>Validado por</h3>
-            <span className="text-[#6F34D1] font-semibold text-[20px] text-center">{validations}</span>
+            <span className="text-[#6F34D1] font-semibold text-[20px] text-center">
+              {validations}
+            </span>
           </div>
         </div>
       </div>
     </>
-  )
+  ) : null;
 }

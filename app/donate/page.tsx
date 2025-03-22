@@ -105,7 +105,48 @@ export default function Donate() {
       </section>
       <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-3">
         {loading ? (
-          <p className="text-center text-gray-500">Cargando causas...</p>
+          <div className="w-full py-5 border border-gray-300 text-gray-700 rounded-2xl">
+            <div className="flex flex-col gap-2.5 px-5">
+              <div className="flex flex-nowrap gap-3">
+                <div className="aspect-square rounded-full border-[3px] border-transparent bg-gradient-to-r from-[#783BE3]/30 via-[#6028B5]/30 to-[#783BE3]/30 w-[56px] h-[56px] animate-pulse" />
+
+                <div className="flex flex-col gap-1">
+                  <div className="h-[18px] w-32 bg-gray-200 rounded animate-pulse" />
+
+                  <div className="space-y-1 mt-1">
+                    <div className="h-[14px] w-36 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-[14px] w-24 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-[14px] w-32 bg-gray-200 rounded animate-pulse" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-9 bg-gray-200 rounded-full animate-pulse" />
+            </div>
+
+            <hr className="h-[1px] bg-red-100 my-4" />
+
+            <div className="flex gap-[5%] px-5">
+              <div className="relative w-[57.5%] flex flex-col justify-center items-center gap-1.5">
+                <div className="h-5 w-24 bg-gray-200 rounded animate-pulse self-start" />
+
+                <div className="w-full">
+                  <div className="w-full h-4 bg-gray-200 rounded-full mb-2 animate-pulse" />
+
+                  <div className="flex justify-between">
+                    <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative w-[37.5%] text-center">
+                <div className="h-5 w-24 bg-gray-200 rounded animate-pulse mx-auto" />
+
+                <div className="h-[20px] w-12 bg-gray-200 rounded animate-pulse mx-auto mt-1" />
+              </div>
+            </div>
+          </div>
         ) : causes && causes.length > 0 ? (
           causes.map((cause) => (
             <PrimaryDonationCard
@@ -113,7 +154,9 @@ export default function Donate() {
               id={cause.uuid}
               name={cause.owner}
               createdAt={cause.createdAt}
-              // cause={cause.detail}
+              funds={cause.funds}
+              fundsLimit={cause.fundsLimit}
+              cause={cause.cause}
               place={cause.place}
               image={cause.profile || "/placeholder.png"}
               collected={cause.funds}
