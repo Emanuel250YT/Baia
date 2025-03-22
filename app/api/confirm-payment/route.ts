@@ -1,3 +1,4 @@
+import CauseModel from "@/database/Cause";
 import DonationModel from "@/database/Donation";
 import { MiniAppPaymentSuccessPayload } from "@worldcoin/minikit-js";
 import { cookies } from "next/headers";
@@ -36,6 +37,10 @@ export async function POST(req: NextRequest) {
     if (transaction.reference == reference.uuid && transaction.status != "failed") {
 
       reference.verified = true;
+      const cause = await CauseModel.findOne({ uuid: reference.cause })
+      if (cause) {
+        cause.funds = Number(cause.funds) + reference.amount;
+      }
       await reference.save()
       return NextResponse.json({ success: true });
     } else {

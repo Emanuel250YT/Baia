@@ -10,7 +10,8 @@ const DonationSchema: Schema = new Schema<IDonation>({
   cause: { type: String },
   createdAt: { required: true, type: Number },
   wallet: { type: String },
-  verified: { type: Boolean, default: false }
+  verified: { type: Boolean, default: false },
+  amount: { type: Number, default: 0 }
 });
 
 DonationSchema.plugin(mongoosePaginate)

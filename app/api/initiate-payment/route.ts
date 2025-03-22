@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
     createdAt: new Date().getTime(),
     uuid: uuid,
     wallet: body.wallet,
-    cause: body.cause
+    cause: body.cause,
+    amount: body.amount
   })
 
 

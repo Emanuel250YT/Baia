@@ -8,6 +8,7 @@ export interface IDonation {
   wallet: string;
   createdAt: number,
   verified: boolean;
+  amount: number
 }
 
 export const ZDonationCreate = z.object({
