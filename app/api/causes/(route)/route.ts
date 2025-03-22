@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/authOptions";
 import { GetServerSideProps } from 'next';
 import { Priorities } from "@/data/causePriority";
+import { GetDetails } from "@/lib/openIA";
 
 export async function POST(req: NextRequest) {
 
@@ -76,6 +77,7 @@ export async function POST(req: NextRequest) {
   finalBody.creationIndex = await CauseModel.countDocuments() + 1
 
 
+
   const cause = await CauseModel.create(finalBody).catch(err => {
     if (err) return false
   })
@@ -87,6 +89,29 @@ export async function POST(req: NextRequest) {
     status: APIStatus.InternalServerError
   }).response()
 
+
+
+  GetDetails(finalBody.description).then(async (details) => {
+    try {
+      if (!details) return;
+      const parsedDetails = JSON.parse(details.output_text)
+
+      const cause = await CauseModel.findOne({ uuid: finalBody.uuid })
+
+      if (!cause) return;
+
+      cause.detail = parsedDetails
+      cause.fundsLimit = parsedDetails.reduce((prev: any, current: { totalCost: any; }) => {
+        return prev + current.totalCost
+      }, 0)
+
+      cause.pendingValuation = false
+
+      await cause.save()
+    } catch (err) {
+      console.log(err)
+    }
+  })
 
   return NextResponse.json(sanitizeModel(cause))
 }
