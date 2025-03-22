@@ -3,8 +3,10 @@ import Image from "next/image";
 import PillButton from "../Buttons/PillButton";
 import { ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 interface props {
+  id: string;
   createdAt: number;
   place: string;
   cause: string;
@@ -13,6 +15,7 @@ interface props {
   validations: number;
 }
 export default function PrimaryDonationCard({
+  id,
   createdAt,
   cause,
   collected,
@@ -48,18 +51,18 @@ export default function PrimaryDonationCard({
               {disaster && (
                 <>
                   {disaster.emoji} {disaster.label}
+                  <br />
                 </>
               )}
-              <br />
               <span className="font-semibold">
                 💸 Monto requerido: ${goal} ARS
               </span>
             </p>
           </div>
         </div>
-        <div className="flex flex-nowrap gap-3 items-center justify-center">
+        <Link href={`/damnificated-profile/${id}`} className="flex flex-nowrap gap-3 items-center justify-center">
           <ChevronRight size={42} color="#783BE3"></ChevronRight>
-        </div>
+        </Link>
       </div>
       <hr className="h-[1px] bg-red-100 my-4" />
 

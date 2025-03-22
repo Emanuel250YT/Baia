@@ -1,5 +1,6 @@
 "use client";
 
+import { ICause } from "@/classes/Cause";
 import PillButton from "@/components/Buttons/PillButton";
 import PrimaryRequestCard from "@/components/Cards/PrimaryRequestCard";
 import Navbar from "@/components/Navigation/Navbar";
@@ -10,26 +11,34 @@ import Image from "next/image";
 import { Fragment, useEffect, useState } from "react";
 
 export default function Request() {
-  const [wallet, setWallet] = useState<string | null>(null);
-  const [causes, setCauses] = useState<Array<any>>([]);
+  const [wallet, setWallet] = useState<string | null>("");
+  const [causes, setCauses] = useState<Array<ICause>>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchWallet();
   }, []);
 
+  const fetchCauses = async () => {
+    const request = await fetch(`/api/causes/${wallet}`);
+    console.log("wallet", wallet);
+    if (request.status === 200) {
+      const data = await request.json();
+      console.log(data.body);
+      setCauses(data.body);
+    }
+
+    return;
+  };
+
   const fetchWallet = async (): Promise<void> => {
     setLoading(true);
     const address = await GetWalletSession();
     if (address) {
       setWallet(address);
+      await fetchCauses();
     }
 
-    const request = await fetch(`/api/causes${wallet}`);
-    if (request.status === 200) {
-      const data = await request.json();
-      setCauses(data.body);
-    }
     setLoading(false);
   };
 
@@ -42,14 +51,17 @@ export default function Request() {
     try {
       const res = await fetch(`/api/nonce`);
       const { nonce } = await res.json();
-      
+
       const { commandPayload: generateMessageResult, finalPayload } =
         await MiniKit.commandsAsync.walletAuth({
           nonce,
           requestId: "0",
-          expirationTime: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+          expirationTime: new Date(
+            new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+          ),
           notBefore: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
-          statement: "This is my statement and here is a link https://worldcoin.com/apps",
+          statement:
+            "This is my statement and here is a link https://worldcoin.com/apps",
         });
 
       if (finalPayload.status === "error") {
@@ -93,16 +105,19 @@ export default function Request() {
           </>
         ) : (
           !loading &&
-          wallet && (
+          wallet &&
+          causes.map((cause, index) => (
             <PrimaryRequestCard
-              createdAt={new Date().getTime()}
-              cause={"flood"}
-              place="Bahia Blanca"
-              collected={0}
-              goal={100}
-              validations={100}
+              key={index}
+              id={cause.uuid}
+              createdAt={cause.createdAt}
+              cause={cause.cause}
+              place={cause.place}
+              collected={cause.funds}
+              goal={cause.fundsLimit}
+              validations={cause.validations}
             ></PrimaryRequestCard>
-          )
+          ))
         )}
       </section>
 
