@@ -6,6 +6,7 @@ import Navbar from "@/components/Navigation/Navbar";
 import Image from "next/image";
 
 import { useParams } from "next/navigation";
+import Subtitle from "@/components/Text/Subtitle";
 
 export default function Validate() {
   const params = useParams<{ id: string }>();
@@ -57,7 +58,7 @@ export default function Validate() {
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
-          <h2>Escribe tu validación</h2>
+          <Subtitle content={"Escribe tu validación"}></Subtitle>
           <textarea
             className="w-full p-5 border border-gray-300 text-gray-500 rounded-2xl text-left bg-[rgba(0,0,0,0.05)]"
             placeholder="Comentario..."
@@ -69,7 +70,9 @@ export default function Validate() {
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
-          <h2>Aporta evidencia en fotos de las pérdidas</h2>
+          <Subtitle
+            content={"Aporta evidencia en fotos de las pérdidas"}
+          ></Subtitle>
           <label
             htmlFor="dropzone-file"
             className="flex flex-col items-center justify-center w-full p-5 border border-gray-300 text-gray-700 rounded-2xl cursor-pointer bg-[rgba(0,0,0,0.05)]"

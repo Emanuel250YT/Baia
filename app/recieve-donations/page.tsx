@@ -10,6 +10,7 @@ import { CreateCause } from "@/requests/causes/methods";
 
 import { disasters } from "@/data/disasters";
 import { MiniKit } from "@worldcoin/minikit-js";
+import Subtitle from "@/components/Text/Subtitle";
 
 export default function RecieveDonations() {
   const [name, setName] = useState<string>("");
@@ -47,7 +48,7 @@ export default function RecieveDonations() {
     formData.append("place", location);
     formData.append("cause", cause);
     formData.append("description", description);
-    formData.append("wallet", "0x427cc9d8e489287c221d4c75edd446723ee0e1a0")
+    formData.append("wallet", "0x427cc9d8e489287c221d4c75edd446723ee0e1a0");
 
     if (profilePhoto) {
       formData.append("profile", profilePhoto);
@@ -69,43 +70,44 @@ export default function RecieveDonations() {
       return; // handle catch error
     }
   };
-  
 
   useEffect(() => {
     (async () => {
-
       if (!MiniKit.isInstalled()) {
-        return
+        return;
       }
 
-      const res = await fetch(`/api/nonce`)
-      const { nonce } = await res.json()
+      const res = await fetch(`/api/nonce`);
+      const { nonce } = await res.json();
 
-      const { commandPayload: generateMessageResult, finalPayload } = await MiniKit.commandsAsync.walletAuth({
-        nonce: nonce,
-        requestId: '0', // Optional
-        expirationTime: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
-        notBefore: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
-        statement: 'This is my statement and here is a link https://worldcoin.com/apps',
-      })
+      const { commandPayload: generateMessageResult, finalPayload } =
+        await MiniKit.commandsAsync.walletAuth({
+          nonce: nonce,
+          requestId: "0", // Optional
+          expirationTime: new Date(
+            new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+          ),
+          notBefore: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+          statement:
+            "This is my statement and here is a link https://worldcoin.com/apps",
+        });
 
-      if (finalPayload.status === 'error') {
-        return
+      if (finalPayload.status === "error") {
+        return;
       } else {
-        const response = await fetch('/api/complete-siwe', {
-          method: 'POST',
+        const response = await fetch("/api/complete-siwe", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             payload: finalPayload,
             nonce,
           }),
-        })
+        });
       }
-
-    })()
-  }, [])
+    })();
+  }, []);
 
   return (
     <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
@@ -113,7 +115,8 @@ export default function RecieveDonations() {
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
-          <h2>Completa con tus datos personales</h2>
+          <Subtitle content={"📝 Completa tus datos personales"} />
+
           <input
             type="text"
             className="w-full px-4 py-2 border border-gray-300 text-gray-500 rounded-2xl text-left bg-[rgba(0,0,0,0.05)]"
@@ -179,9 +182,8 @@ export default function RecieveDonations() {
 
       <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="flex flex-col items-center justify-center gap-3">
-          <h2 className="text-center">
-            Contanos qué pasó y qué ayuda necesitas 🙏
-          </h2>
+          <Subtitle content={"Contanos qué pasó y qué ayuda necesitas 🙏"} />
+
           <div className="w-full text-gray-700 rounded-2xl">
             <p className="text-[14px]">
               Para que la comunidad pueda ayudarte mejor, describe brevemente la
@@ -214,7 +216,7 @@ export default function RecieveDonations() {
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
-          <h2>Aporta evidencia en fotos de las pérdidas</h2>
+          <Subtitle content={"📸 Aporta evidencia en fotos de las perdidas"} />
           <label
             htmlFor="loss-photos-upload"
             className="flex flex-col items-center justify-center w-full p-5 border border-gray-300 text-gray-700 rounded-2xl cursor-pointer bg-[rgba(0,0,0,0.05)]"

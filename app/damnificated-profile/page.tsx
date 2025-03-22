@@ -1,7 +1,9 @@
 "use client";
 
 import PillButton from "@/components/Buttons/PillButton";
+import ImageCarousel from "@/components/Carousels/Carousel";
 import Navbar from "@/components/Navigation/Navbar";
+import Subtitle from "@/components/Text/Subtitle";
 import Image from "next/image";
 
 export default function Donar() {
@@ -34,7 +36,7 @@ export default function Donar() {
       <hr className="h-[1px] bg-gray-300" />
       <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="flex flex-col items-center justify-center gap-3">
-          <h2>Descripción personal</h2>
+          <Subtitle content={"📝 Descripción personal"} />
           <div className="w-full p-5 border border-gray-300 text-gray-700 rounded-2xl">
             <p className="text-[14px]">
               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vel
@@ -45,11 +47,20 @@ export default function Donar() {
           </div>
         </div>
       </section>
+      <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
+        <div className="w-full flex flex-col items-center justify-center gap-3">
+          <Subtitle content={"📸 Fotos de pérdidas materiales"} />
+
+          <div className="w-full p-5 border border-gray-300 text-gray-700 rounded-2xl">
+            <ImageCarousel />
+          </div>
+        </div>
+      </section>{" "}
       <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="flex flex-col items-center justify-center gap-3">
-          <h2>Pérdida estimada</h2>
-          <div className="w-full p-5 border border-gray-300 text-gray-700 rounded-2xl">
-            <div className="space-y-4">
+          <Subtitle content={"🤖 Pérdida estimada"} />
+          <div className="w-full py-5 border border-gray-300 text-gray-700 rounded-2xl">
+            <div className="space-y-4 px-5">
               <div>
                 <div className="flex items-center gap-1.5 mb-2">
                   <span className="h-3 w-3 rounded-full bg-red-500"></span>
@@ -70,7 +81,7 @@ export default function Donar() {
                     icon="🛏️"
                     name="Cama y colchón"
                     forPeople={4}
-                    amount={900000}
+                    amount={1000000}
                   />
                   <ItemRow
                     icon="💊"
@@ -108,16 +119,26 @@ export default function Donar() {
                 </div>
               </div>
             </div>
+
             <hr className="h-[1px] bg-gray-300 my-4" />
-            total estimado $1000
+
+            <div className="flex flex-col gap-1 items-center justify-center px-5">
+              <span className="font-semibold text-gray-800">💸 TOTAL ESTIMADO</span>
+              <span className="text-brand-purple font-bold text-center text-[24px]">
+                $1.440.000 ARS
+              </span>
+            </div>
           </div>
         </div>
       </section>
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3">
-          <h2>Recaudado</h2>
+          <Subtitle content={"🎯 Recaudado"} />
 
-          <div className="flex-1 w-full">
+          <div className="flex-1 w-full p-5 border border-gray-300 text-gray-700 rounded-2xl gap-3 space-y-3">
+            <span className="text-brand-purple font-bold text-center text-[24px]">
+              $1.440.000 ARS
+            </span>
             <div className="flex-1 w-full h-4 bg-gray-200 rounded-full mb-2">
               <div
                 className="h-full bg-purple-gradient rounded-full"
@@ -134,19 +155,30 @@ export default function Donar() {
       </section>
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3">
-          <h2>Validaciones de la comunidad</h2>
+          <Subtitle content={"🤝 Validaciones de la comunidad"} />
 
-          <div className="w-full p-5 border border-gray-300 text-gray-700 rounded-2xl">
-            <p>Validado por <span>24 humanos reales</span>.</p>
-            <p>5 personas han aportado evidencia de las pérdidas materiales.</p>
+          <div className="w-full p-5 border border-gray-300 text-gray-700 rounded-2xl flex flex-col gap-3">
+            <p className="">
+              👍 Validado por{" "}
+              <span className="text-brand-purple font-semibold">
+                24 humanos reales
+              </span>
+              .
+            </p>
+            <p>
+              📸{" "}
+              <span className="text-brand-purple font-semibold">
+                5 personas
+              </span>{" "}
+              han aportado evidencia de las pérdidas materiales.
+            </p>
           </div>
         </div>
-      </section>{" "}
-
+      </section>
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-col flex-nowrap justify-start gap-1.5">
         <PillButton label="Donar"></PillButton>
         <PillButton label="Validar pedido de *"></PillButton>
-      </section>{" "}
+      </section>
     </main>
   );
 }
@@ -159,23 +191,33 @@ interface ItemRowProps {
 }
 
 function ItemRow({ icon, name, forPeople, amount }: ItemRowProps) {
-  const formattedAmount = amount
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const formatAmount = (amount: number): string => {
+    if (amount >= 1_000_000) {
+      return (
+        (amount / 1_000_000)
+          .toFixed(
+            amount % 1_000_000 === 0 ? 0 : amount % 100_000 === 0 ? 1 : 3
+          )
+          .replace(/\.00$/, "") + "M"
+      );
+    } else {
+      return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+  };
 
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
         <span className="text-sm">{icon}</span>
         <span className="font-medium text-xs">{name}</span>
-        {forPeople && (
+        {/* {forPeople && (
           <span className="ml-0.5 bg-blue-100 text-blue-800 border border-blue-200 text-[10px] px-1 py-0.5 rounded-full whitespace-nowrap">
             👥 {forPeople}
           </span>
-        )}
+        )} */}
       </div>
       <div className="bg-black text-white px-2 py-1 rounded-full flex items-center text-xs whitespace-nowrap">
-        <span className="text-amber-400 mr-0.5">💰</span>${formattedAmount}
+        <span className="text-amber-400 mr-0.5">💰</span>${formatAmount(amount)}
       </div>
     </div>
   );

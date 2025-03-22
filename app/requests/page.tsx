@@ -3,6 +3,7 @@
 import PillButton from "@/components/Buttons/PillButton";
 import PrimaryRequestCard from "@/components/Cards/PrimaryRequestCard";
 import Navbar from "@/components/Navigation/Navbar";
+import Subtitle from "@/components/Text/Subtitle";
 import { disasters } from "@/data/disasters";
 import Image from "next/image";
 import { Fragment, useState } from "react";
@@ -30,11 +31,14 @@ export default function Donate() {
       </section>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
-        <PillButton label="Iniciar otro pedido"></PillButton>
+        <PillButton
+          label="Iniciar otro pedido"
+          link={"/recieve-donations"}
+        ></PillButton>
       </section>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
-        <h2 className="w-full text-center">Novedades</h2>
+        <Subtitle content={"🔔 Novedades"} />
         <Notification
           icon={"💰"}
           label="Recibiste una donación de 100.000$ ARS 🎉"
