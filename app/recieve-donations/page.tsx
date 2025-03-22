@@ -53,7 +53,6 @@ export default function RecieveDonations() {
     formData.append("wallet", MiniKit.walletAddress || "0x427cc9d8e489287c221d4c75edd446723ee0e1a0");
 
 
-
     if (profilePhoto) {
       formData.append("profile", profilePhoto);
     }
@@ -68,8 +67,6 @@ export default function RecieveDonations() {
 
     try {
       const response = await CreateCause(formData);
-
-      console.log(response);
     } catch (error) {
       return; // handle catch error
     }
