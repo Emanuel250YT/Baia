@@ -20,7 +20,7 @@ export default function Home() {
         <div className="flex flex-col gap-y-4">
           <PillButton label="Donar" link="/donate"></PillButton>
 
-          <PillButton label="Recibir donaciones"></PillButton>
+          <PillButton label="Recibir donaciones" link="/recieve-donations"></PillButton>
         </div>
 
         <button className="text-gray-700 text-[18px] underline">
