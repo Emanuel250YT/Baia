@@ -4,21 +4,10 @@ import { useState, TouchEvent } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const images = [
-  {
-    src: "/placeholder.png",
-    alt: "Material losses showing debris outside a home",
-  },
-  {
-    src: "/placeholder.png",
-    alt: "Material losses showing debris on a street",
-  },
-  { src: "/placeholder.png", alt: "Material losses image 3" },
-  { src: "/placeholder.png", alt: "Material losses image 4" },
-  { src: "/placeholder.png", alt: "Material losses image 5" },
-];
-
-export default function ImageCarousel() {
+interface ImageCarouselProps {
+  images: string[];
+}
+export default function ImageCarousel({images} : ImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -82,8 +71,8 @@ export default function ImageCarousel() {
             <div key={index} className="min-w-full h-full flex-shrink-0 px-2">
               <div className="relative w-full h-full overflow-hidden rounded-2xl">
                 <Image
-                  src={image.src || "/uploadImage.png"}
-                  alt={image.alt}
+                  src={image || "/uploadImage.png"}
+                  alt={`Disaster Image ${index}`}
                   fill
                   className="object-contain rounded-lg"
                 />

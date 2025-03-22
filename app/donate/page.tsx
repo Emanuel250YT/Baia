@@ -4,16 +4,44 @@ import PrimaryDonationCard from "@/components/Cards/PrimaryDonationCard";
 import Navbar from "@/components/Navigation/Navbar";
 import { disasters } from "@/data/disasters";
 import Image from "next/image";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+
+import { GetAllCauses } from "@/requests/causes/methods";
+import { ICause } from "@/classes/Cause";
+import { PrioritiesKeys } from "@/data/causePriority";
 
 export default function Donate() {
-  const [selectedFilter, setSelectedFilter] = useState<string>("Urgente");
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+  const [causes, setCauses] = useState<Array<ICause> | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchCauses() {
+      setLoading(true);
+
+      const isValidPriority =
+        selectedFilter && selectedFilter in PrioritiesKeys;
+
+      const filter = isValidPriority
+        ? { priority: selectedFilter as keyof typeof PrioritiesKeys }
+        : undefined;
+
+      const request = await fetch(
+        `/api/causes?page=1&limit=1&${filter ? `priority=${filter}` : ""}`
+      );
+      if (request.status === 200) {
+        const data = await request.json();
+        setCauses(data.body);
+      }
+      setLoading(false);
+    }
+
+    fetchCauses();
+  }, [selectedFilter]);
 
   const handleFilterClick = (filter: string) => {
     setSelectedFilter(filter);
   };
-
-
 
   return (
     <main className="bg-white flex min-h-screen flex-col gap-y-5 text-black text-[15px]">
@@ -75,17 +103,27 @@ export default function Donate() {
           </div>
         </div>
       </section>
-      <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
-        <PrimaryDonationCard
-          name="Julián Rodríguez"
-          createdAt={new Date().getTime()}
-          cause={disasters.find(d => d.id == "flood")}
-          place="Bahia Blanca"
-          image="/placeholder.png"
-          collected={0}
-          goal={100}
-          validations={100}
-        ></PrimaryDonationCard>
+      <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-3">
+        {loading ? (
+          <p className="text-center text-gray-500">Cargando causas...</p>
+        ) : causes && causes.length > 0 ? (
+          causes.map((cause) => (
+            <PrimaryDonationCard
+              key={cause.uuid}
+              id={cause.uuid}
+              name={cause.owner}
+              createdAt={cause.createdAt}
+              // cause={cause.detail}
+              place={cause.place}
+              image={cause.profile || "/placeholder.png"}
+              collected={cause.funds}
+              goal={cause.fundsLimit}
+              validations={cause.validations}
+            />
+          ))
+        ) : (
+          <p className="text-center text-gray-500">No hay causas disponibles</p>
+        )}
       </section>
     </main>
   );

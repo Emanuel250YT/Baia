@@ -1,7 +1,9 @@
 import { IDisaster } from '@/data/disasters'
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface props {
+  id: string,
   image: string,
   name: string,
   createdAt: number,
@@ -12,6 +14,7 @@ interface props {
   validations: number
 }
 export default function PrimaryDonationCard({
+  id,
   image,
   name,
   createdAt,
@@ -30,7 +33,7 @@ export default function PrimaryDonationCard({
           <div className="flex flex-nowrap gap-3">
             <Image
               src={image}
-              className="rounded-full border-[3px] border-transparent bg-gradient-to-r from-[#783BE3] via-[#6028B5] to-[#783BE3] max-w-[56px] max-h-[56px]"
+              className="aspect-square object-cover rounded-full border-[3px] border-transparent bg-gradient-to-r from-[#783BE3] via-[#6028B5] to-[#783BE3] max-w-[56px] max-h-[56px]"
               alt="placeholder"
               width={56}
               height={56}
@@ -50,9 +53,9 @@ export default function PrimaryDonationCard({
               </p>
             </div>
           </div>
-          <button className="bg-purple-gradient rounded-full px-3 py-1.5 text-white">
+          <Link href={`/damnificated-profile/${id}`} className="bg-purple-gradient text-center rounded-full px-3 py-1.5 text-white">
             Donar
-          </button>
+          </Link>
         </div>
         <hr className="h-[1px] bg-red-100 my-4" />
 
