@@ -131,7 +131,6 @@ export async function GET(req: NextRequest) {
     }
 
 
-    console.log(paginationConfiguration, query)
 
 
     const dbCauses = await CauseModel.paginate(query, paginationConfiguration)
