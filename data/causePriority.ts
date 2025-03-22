@@ -1,8 +1,8 @@
 export const Priorities = {
   "majorGoal": { sort: { funds: 1 } },
   "minorGoal": { sort: { funds: -1 } },
-  "primary": { query: { "details.priority": "primary" } },
-  "secondary": { query: { "details.priority": "secondary" } },
+  "primary": { query: { "detail.priority": { $exists: true, $eq: "primary" } } },
+  "secondary": { query: { "detail.priority": { $exists: true, $eq: "secondary" } } },
   "mostValidated": { sort: { validations: 1 } },
   "poorValidated": { sort: { validations: -1 } },
   "recent": { sort: { createdAt: 1 } },
