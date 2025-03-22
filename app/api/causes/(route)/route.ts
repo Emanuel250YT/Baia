@@ -155,7 +155,7 @@ export async function GET(req: NextRequest) {
     //@ts-ignore
     if (priorityValue.sort) {
       //@ts-ignore
-      paginationConfiguration.short = priorityValue.sort
+      paginationConfiguration.sort = priorityValue.sort
 
     }
     //@ts-ignore
