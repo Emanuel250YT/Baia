@@ -5,6 +5,8 @@ import PillButton from "@/components/Buttons/PillButton";
 import Navbar from "@/components/Navigation/Navbar";
 import Image from "next/image";
 import { X } from "lucide-react";
+import { PostBaseData } from "@/requests/baseMethod";
+import { CreateCause } from "@/requests/causes/methods";
 
 export default function RecieveDonations() {
   const [name, setName] = useState<string>("");
@@ -51,19 +53,11 @@ export default function RecieveDonations() {
       formData.append(`lossPhotos[${index}]`, photo);
     });
 
+
     try {
-      const response = await fetch("url", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await CreateCause(formData)
 
-      const data = await response.json();
-
-      if (data.success) {
-        return; // handle success
-      } else {
-        return; // handle not success
-      }
+      console.log(response)
     } catch (error) {
       return; // handle catch error
     }
