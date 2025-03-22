@@ -13,12 +13,17 @@ export interface IValidation {
 
 export const ZValidationCreate = z.object({
   cause: z.string(),
-  images: z.object({
+  images: z.union([z.array(z.object({
     size: z.number(),
     type: z.string(),
     name: z.string(),
     lastModified: z.number(),
-  }),
+  })), z.object({
+    size: z.number(),
+    type: z.string(),
+    name: z.string(),
+    lastModified: z.number(),
+  })]),
   description: z.string()
 })
 
