@@ -4,6 +4,7 @@ import PillButton from "../Buttons/PillButton";
 import { ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { convertUsdToArs } from "@/utils/ConvertCurrency";
 
 interface props {
   id: string;
@@ -55,7 +56,7 @@ export default function PrimaryDonationCard({
                 </>
               )}
               <span className="font-semibold">
-                💸 Monto requerido: ${goal} ARS
+                💸 Monto requerido: ${convertUsdToArs(goal)} ARS
               </span>
             </p>
           </div>
@@ -77,8 +78,8 @@ export default function PrimaryDonationCard({
               />
             </div>
             <div className="flex justify-between text-gray-500 text-xs">
-              <div>{collected} ARS</div>
-              <div>{goal} ARS</div>
+              <div>{convertUsdToArs(collected)} ARS</div>
+              <div>{convertUsdToArs(goal)} ARS</div>
             </div>
           </div>
         </div>
