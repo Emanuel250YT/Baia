@@ -5,7 +5,7 @@ import PillButton from "@/components/Buttons/PillButton";
 import ImageCarousel from "@/components/Carousels/Carousel";
 import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
-import { VerifyCauseOrb } from "@/components/Verify";
+import { VerifyCauseDevice, VerifyCauseOrb } from "@/components/Verify";
 import { disasters } from "@/data/disasters";
 import { GetWalletSession } from "@/utils/GetWalletSession";
 import { MiniKit } from "@worldcoin/minikit-js";

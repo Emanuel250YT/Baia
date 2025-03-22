@@ -84,7 +84,7 @@ export const VerifyBlock = (cause: string) => {
 };
 
 
-export const VerifyCauseDevice = (cause: string) => {
+export const VerifyCauseDevice = ({ cause }: { cause: string }) => {
 
   const verifyPayload: VerifyCommandInput = {
     action: "verify-orb-action", // This is your action ID from the Developer Portal
