@@ -5,6 +5,7 @@ import PillButton from "@/components/Buttons/PillButton";
 import ImageCarousel from "@/components/Carousels/Carousel";
 import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
+import { disasters } from "@/data/disasters";
 import Image from "next/image";
 
 import { redirect, useParams } from "next/navigation";
@@ -15,6 +16,20 @@ export default function DamnificatedProfile() {
 
   const [cause, setCause] = useState<ICause | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [disaster, setDisaster] = useState<{
+    label: string;
+    emoji: string;
+  } | null>(null);
+
+  const [primaryItems, setPrimaryItems] = useState<
+    { priority: string; totalCost: number; amount: number; name: string }[]
+  >([]);
+  const [secondaryItems, setSecondaryItems] = useState<
+    { priority: string; totalCost: number; amount: number; name: string }[]
+  >([]);
+
+  const [percentage, setPercentage] = useState<number>(0)
 
   useEffect(() => {
     if (!id) {
@@ -29,6 +44,20 @@ export default function DamnificatedProfile() {
         const data = await request.json();
         console.log(data);
         setCause(data.body);
+        setDisaster(getDisasterInfo(data.body.cause));
+
+        const primary = data.body.detail.filter(
+          (item: any) => item.priority === "primary"
+        );
+        const secondary = data.body.detail.filter(
+          (item: any) => item.priority === "secondary"
+        );
+        setPrimaryItems(primary);
+        setSecondaryItems(secondary);
+      
+        const progressPercentage = (data.body.funds / data.body.fundsLimit) * 100;
+
+        setPercentage(Math.min(progressPercentage, 100));
       }
       setLoading(false);
     }
@@ -36,17 +65,153 @@ export default function DamnificatedProfile() {
     fetchCauses();
   }, [id]);
 
+  const getDisasterInfo = (id: string) => {
+    const disaster = disasters.find((disaster) => disaster.id === id);
+    return disaster ? { label: disaster.label, emoji: disaster.emoji } : null;
+  };
+
   return (
     <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
-      <Navbar title="Pedido #x" returnTo={"/donate"}></Navbar>
-      {loading
-        ? "Loading..."
-        : cause && (
+      {loading ? (
+        <>
+          <Navbar title="Pedido #x" returnTo={"/donate"}></Navbar>
+
+          {/* Profile Section Skeleton */}
+          <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
+            <div className="flex flex-nowrap gap-3">
+              <div className="rounded-full border-[3px] border-transparent bg-gray-200 w-[96px] h-[96px] animate-pulse"></div>
+              <div className="flex flex-col gap-1">
+                <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-4 w-40 bg-gray-200 rounded animate-pulse mt-1"></div>
+                <div className="h-4 w-36 bg-gray-200 rounded animate-pulse mt-1"></div>
+                <div className="h-4 w-28 bg-gray-200 rounded animate-pulse mt-1"></div>
+              </div>
+            </div>
+          </section>
+
+          <hr className="h-[1px] bg-gray-300" />
+
+          <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
+            <div className="w-full flex flex-col items-center justify-center gap-3">
+              <div className="h-6 w-40 bg-gray-200 rounded animate-pulse self-start"></div>
+              <div className="flex-1 w-full p-5 border border-gray-300 rounded-2xl">
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse mt-2"></div>
+                <div className="h-4 w-4/6 bg-gray-200 rounded animate-pulse mt-2"></div>
+              </div>
+            </div>
+          </section>
+
+          <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
+            <div className="w-full flex flex-col items-center justify-center gap-3">
+              <div className="h-6 w-48 bg-gray-200 rounded animate-pulse self-start"></div>
+              <div className="w-full p-5 border border-gray-300 rounded-2xl">
+                <div className="w-full h-40 bg-gray-200 rounded-lg animate-pulse"></div>
+                <div className="flex justify-center mt-2 gap-2">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-2 h-2 rounded-full bg-gray-300 animate-pulse"
+                    ></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
+            <div className="flex flex-col items-center justify-center gap-3 w-full">
+              <div className="h-6 w-36 bg-gray-200 rounded animate-pulse self-start"></div>
+              <div className="w-full py-5 border border-gray-300 rounded-2xl">
+                <div className="space-y-4 px-5">
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="h-3 w-3 rounded-full bg-gray-200 animate-pulse"></div>
+                      <div className="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between gap-1"
+                        >
+                          <div className="h-8 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+                          <div className="h-8 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="h-3 w-3 rounded-full bg-gray-200 animate-pulse"></div>
+                      <div className="h-4 w-52 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      {[...Array(2)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between gap-1"
+                        >
+                          <div className="h-8 w-24 bg-gray-200 rounded-full animate-pulse"></div>
+                          <div className="h-8 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <hr className="h-[1px] bg-gray-300 my-4" />
+
+                <div className="flex flex-col gap-1 items-center justify-center px-5">
+                  <div className="h-5 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-8 w-40 bg-gray-200 rounded animate-pulse mt-1"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
+            <div className="w-full flex flex-col items-center justify-center gap-3">
+              <div className="h-6 w-28 bg-gray-200 rounded animate-pulse self-start"></div>
+              <div className="flex-1 w-full p-5 border border-gray-300 rounded-2xl gap-3 space-y-3">
+                <div className="h-8 w-40 bg-gray-200 rounded animate-pulse mx-auto"></div>
+                <div className="flex-1 w-full h-4 bg-gray-200 rounded-full mb-2"></div>
+                <div className="flex justify-between">
+                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
+            <div className="w-full flex flex-col items-center justify-center gap-3">
+              <div className="h-6 w-52 bg-gray-200 rounded animate-pulse self-start"></div>
+              <div className="w-full p-5 border border-gray-300 rounded-2xl flex flex-col gap-3">
+                <div className="h-5 w-full bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-5 w-5/6 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </section>
+
+          <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-col flex-nowrap justify-start gap-1.5">
+            <div className="h-12 w-full bg-gray-200 rounded-full animate-pulse"></div>
+            <div className="h-12 w-full bg-gray-200 rounded-full animate-pulse mt-2"></div>
+          </section>
+        </>
+      ) : (
+        cause && (
+          <>
+            <Navbar title="Pedido #x" returnTo={"/donate"}></Navbar>
             <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
               <div className="flex flex-nowrap gap-3">
                 <Image
-                  src={"/placeholder.png"}
-                  className="rounded-full border-[3px] border-transparent bg-gradient-to-r from-[#783BE3] via-[#6028B5] to-[#783BE3] max-w-[96px] max-h-[96px]"
+                  src={cause.profile}
+                  className="aspect-square object-cover rounded-full border-[3px] border-transparent bg-gradient-to-r from-[#783BE3] via-[#6028B5] to-[#783BE3] max-w-[96px] max-h-[96px]"
                   alt="placeholder"
                   width={96}
                   height={96}
@@ -61,16 +226,13 @@ export default function DamnificatedProfile() {
                     <br />
                     📍 {cause.place}
                     <br />
-                    {cause.cause}
+                    {disaster?.emoji} {disaster?.label}
                   </p>
                 </div>
               </div>
             </section>
-          )}
-      <hr className="h-[1px] bg-gray-300" />
-      {loading
-        ? "Loading..."
-        : cause && (
+            <hr className="h-[1px] bg-gray-300" />
+
             <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
               <div className="w-full flex flex-col items-center justify-center gap-3">
                 <Subtitle content={"📝 Descripción personal"} />
@@ -79,10 +241,7 @@ export default function DamnificatedProfile() {
                 </div>
               </div>
             </section>
-          )}
-      {loading
-        ? "Loading..."
-        : cause && (
+
             <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
               <div className="w-full flex flex-col items-center justify-center gap-3">
                 <Subtitle content={"📸 Fotos de pérdidas materiales"} />
@@ -92,10 +251,7 @@ export default function DamnificatedProfile() {
                 </div>
               </div>
             </section>
-          )}
-      {loading
-        ? "Loading..."
-        : cause && (
+
             <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
               <div className="flex flex-col items-center justify-center gap-3">
                 <Subtitle content={"🤖 Pérdida estimada"} />
@@ -110,42 +266,13 @@ export default function DamnificatedProfile() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <ItemRow
-                          icon="👕"
-                          name="Ropa"
-                          forPeople={4}
-                          amount={300000}
-                        />
-                        <ItemRow icon="❄️" name="Heladera" amount={600000} />
-                        <ItemRow
-                          icon="🛏️"
-                          name="Cama y colchón"
-                          forPeople={4}
-                          amount={1000000}
-                        />
-                        <ItemRow
-                          icon="💊"
-                          name="Medicamentos"
-                          forPeople={4}
-                          amount={80000}
-                        />
-                        <ItemRow
-                          icon="🔥"
-                          name="Cocina a gas"
-                          amount={320000}
-                        />
-                        <ItemRow
-                          icon="👞"
-                          name="Calzado"
-                          forPeople={4}
-                          amount={300000}
-                        />
-                        <ItemRow
-                          icon="📝"
-                          name="Útiles escolares"
-                          forPeople={2}
-                          amount={50000}
-                        />
+                        {primaryItems.map((item, index) => (
+                          <ItemRow
+                            key={index}
+                            name={item.name}
+                            amount={item.amount}
+                          />
+                        ))}
                       </div>
                     </div>
 
@@ -158,12 +285,13 @@ export default function DamnificatedProfile() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <ItemRow
-                          icon="🔨"
-                          name="Herramientas"
-                          amount={250000}
-                        />
-                        <ItemRow icon="🚲" name="Bicicleta" amount={200000} />
+                        {secondaryItems.map((item, index) => (
+                          <ItemRow
+                            key={index}
+                            name={item.name}
+                            amount={item.amount}
+                          />
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -175,44 +303,35 @@ export default function DamnificatedProfile() {
                       💸 TOTAL ESTIMADO
                     </span>
                     <span className="text-brand-purple font-bold text-center text-[24px]">
-                      $1.440.000 ARS
+                      ${cause.fundsLimit} ARS
                     </span>
                   </div>
                 </div>
               </div>
             </section>
-          )}
 
-      {loading
-        ? "Loading..."
-        : cause && (
             <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
               <div className="w-full flex flex-col items-center justify-center gap-3">
                 <Subtitle content={"🎯 Recaudado"} />
 
                 <div className="flex-1 w-full p-5 border border-gray-300 text-gray-700 rounded-2xl gap-3 space-y-3">
-                  <span className="text-brand-purple font-bold text-center text-[24px]">
-                    $1.440.000 ARS
-                  </span>
+                  <h2 className="text-brand-purple font-bold text-center text-[24px]">
+                    ${cause.funds} ARS
+                  </h2>
                   <div className="flex-1 w-full h-4 bg-gray-200 rounded-full mb-2">
                     <div
                       className="h-full bg-purple-gradient rounded-full"
-                      style={{ width: `50%` }}
+                      style={{ width: `${percentage}%` }}
                     />
                   </div>
                   <div className="flex justify-between text-gray-500 text-xs">
-                    <div>0 ARS</div>
-                    <div>500K ARS</div>
-                    <div>1M ARS</div>
+                    <div>{cause.funds} ARS</div>
+                    <div>{cause.fundsLimit} ARS</div>
                   </div>
                 </div>
               </div>
             </section>
-          )}
 
-      {loading
-        ? "Loading..."
-        : cause && (
             <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
               <div className="w-full flex flex-col items-center justify-center gap-3">
                 <Subtitle content={"🤝 Validaciones de la comunidad"} />
@@ -221,31 +340,33 @@ export default function DamnificatedProfile() {
                   <p className="">
                     👍 Validado por{" "}
                     <span className="text-brand-purple font-semibold">
-                      24 humanos reales
+                      {cause.validations} humanos reales
                     </span>
                     .
                   </p>
                   <p>
                     📸{" "}
                     <span className="text-brand-purple font-semibold">
-                      5 personas
+                      0 personas
                     </span>{" "}
                     han aportado evidencia de las pérdidas materiales.
                   </p>
                 </div>
               </div>
             </section>
-          )}
-      <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-col flex-nowrap justify-start gap-1.5">
-        <PillButton label="Donar"></PillButton>
-        <PillButton label="Validar pedido de *"></PillButton>
-      </section>
+            <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-col flex-nowrap justify-start gap-1.5">
+              <PillButton label="Donar"></PillButton>
+              <PillButton label={`Validar pedido de ${cause.owner}`}></PillButton>
+            </section>
+          </>
+        )
+      )}
     </main>
   );
 }
 
 interface ItemRowProps {
-  icon: string;
+  icon?: string;
   name: string;
   forPeople?: number;
   amount: number;
@@ -269,7 +390,7 @@ function ItemRow({ icon, name, forPeople, amount }: ItemRowProps) {
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
-        <span className="text-sm">{icon}</span>
+        {icon && <span className="text-sm">{icon}</span>}
         <span className="font-medium text-xs">{name}</span>
         {/* {forPeople && (
           <span className="ml-0.5 bg-blue-100 text-blue-800 border border-blue-200 text-[10px] px-1 py-0.5 rounded-full whitespace-nowrap">
