@@ -6,10 +6,10 @@ import Image from "next/image";
 export default function SuccessDonation() {
   return (
     <main className="bg-brand-purple flex min-h-screen flex-col items-center justify-evenly gap-y-3 text-black text-[22px]">
-      <section className="relative w-[90%] mx-auto px-6 flex flex-col items-center gap-10">
-        <div className="flex flex-col gap-2 flex-nowrap justify-center items-center">
+      <section className="relative w-[90%] mx-auto px-6 flex flex-col items-center gap-9">
+        <div className="flex flex-col gap-3 flex-nowrap justify-center items-center">
           <Image src="/logo/light/icon.png" width={48} height={48} alt="" />
-          <Image src="/logo/light/brand.png" width={140} height={52} alt="" />
+          <Image src="/logo/light/brand.png" width={120} height={52} alt="" />
         </div>
         <Image src="/success.png" width={72} height={72} alt="" />
 
