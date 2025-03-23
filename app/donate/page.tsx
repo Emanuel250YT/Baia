@@ -37,7 +37,7 @@ export default function Donate() {
   };
 
   return (
-    <main className="animate-fade-in bg-white flex min-h-screen flex-col gap-y-5 text-black text-[15px]">
+    <main className="animate-fade-in bg-white flex min-h-screen flex-col gap-y-5 text-black text-[15px] pb-4">
       <Navbar title="Donar"></Navbar>
       <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="overflow-x-scroll">
