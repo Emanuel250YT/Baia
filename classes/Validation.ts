@@ -8,7 +8,9 @@ export interface IValidation {
   images: string[];
   createdAt: number;
   description: string;
-  realValidation: string;
+  realValidation: boolean;
+  wallet: string;
+  objetive: string;
 }
 
 export const ZValidationCreate = z.object({
@@ -24,6 +26,7 @@ export const ZValidationCreate = z.object({
     name: z.string(),
     lastModified: z.number(),
   })]),
+  wallet: z.string(),
   description: z.string()
 })
 

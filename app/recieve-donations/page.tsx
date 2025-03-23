@@ -10,12 +10,17 @@ import { CreateCause } from "@/requests/causes/methods";
 
 import { disasters } from "@/data/disasters";
 import { MiniKit } from "@worldcoin/minikit-js";
+import Subtitle from "@/components/Text/Subtitle";
+import { GetWalletSession } from "@/utils/GetWalletSession";
+import { redirect, useRouter } from "next/navigation";
 
 export default function RecieveDonations() {
+  const router = useRouter();
   const [name, setName] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [cause, setCause] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
 
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
 
@@ -40,22 +45,22 @@ export default function RecieveDonations() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("submit");
+    await GetWalletSession();
+
+    if(!MiniKit.walletAddress) return;
+
+    setSubmitting(true);
 
     const formData = new FormData();
     formData.append("owner", name);
     formData.append("place", location);
     formData.append("cause", cause);
     formData.append("description", description);
-    formData.append("wallet", "0x427cc9d8e489287c221d4c75edd446723ee0e1a0")
+    formData.append("wallet", MiniKit.walletAddress);
 
     if (profilePhoto) {
       formData.append("profile", profilePhoto);
     }
-
-    // lossPhotos.forEach((photo, index) => {
-    //   formData.append(`images`, photo);
-    // });
 
     lossPhotos.forEach((photo, index) => {
       formData.append(`images`, photo);
@@ -63,57 +68,28 @@ export default function RecieveDonations() {
 
     try {
       const response = await CreateCause(formData);
-
-      console.log(response);
+      router.push("/success-recieve");
     } catch (error) {
       return; // handle catch error
+    } finally {
+      setSubmitting(false);
     }
   };
 
-
   useEffect(() => {
     (async () => {
-
-      if (!MiniKit.isInstalled()) {
-        return
-      }
-
-      const res = await fetch(`/api/nonce`)
-      const { nonce } = await res.json()
-
-      const { commandPayload: generateMessageResult, finalPayload } = await MiniKit.commandsAsync.walletAuth({
-        nonce: nonce,
-        requestId: '0', // Optional
-        expirationTime: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
-        notBefore: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
-        statement: 'This is my statement and here is a link https://worldcoin.com/apps',
-      })
-
-      if (finalPayload.status === 'error') {
-        return
-      } else {
-        const response = await fetch('/api/complete-siwe', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            payload: finalPayload,
-            nonce,
-          }),
-        })
-      }
-
-    })()
-  }, [])
+      await GetWalletSession()
+    })();
+  }, []);
 
   return (
     <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
-      <Navbar title="Validar" returnTo={"/donate"}></Navbar>
+      <Navbar title="Solicitud de Donaciones"></Navbar>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
-          <h2>Completa con tus datos personales</h2>
+          <Subtitle content={"📝 Completa tus datos personales"} />
+
           <input
             type="text"
             className="w-full px-4 py-2 border border-gray-300 text-gray-500 rounded-2xl text-left bg-[rgba(0,0,0,0.05)]"
@@ -133,8 +109,9 @@ export default function RecieveDonations() {
             className="w-full px-3 py-2 border border-gray-300 text-gray-400 rounded-2xl text-left bg-[rgba(0,0,0,0.05)]"
             value={cause}
             onChange={(e) => setCause(e.target.value)}
+            defaultValue={"default"}
           >
-            <option selected>¿Causa de tu pérdida?</option>
+            <option value="default">¿Causa de tu pérdida?</option>
             {disasters.map((disaster, index) => (
               <option key={index} value={disaster.id}>
                 {disaster.emoji} {disaster.label}
@@ -179,9 +156,8 @@ export default function RecieveDonations() {
 
       <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="flex flex-col items-center justify-center gap-3">
-          <h2 className="text-center">
-            Contanos qué pasó y qué ayuda necesitas 🙏
-          </h2>
+          <Subtitle content={"Contanos qué pasó y qué ayuda necesitas 🙏"} />
+
           <div className="w-full text-gray-700 rounded-2xl">
             <p className="text-[14px]">
               Para que la comunidad pueda ayudarte mejor, describe brevemente la
@@ -214,7 +190,7 @@ export default function RecieveDonations() {
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
-          <h2>Aporta evidencia en fotos de las pérdidas</h2>
+          <Subtitle content={"📸 Aporta evidencia en fotos de las perdidas"} />
           <label
             htmlFor="loss-photos-upload"
             className="flex flex-col items-center justify-center w-full p-5 border border-gray-300 text-gray-700 rounded-2xl cursor-pointer bg-[rgba(0,0,0,0.05)]"
@@ -239,7 +215,6 @@ export default function RecieveDonations() {
               multiple
               className="hidden"
               onChange={(e) => {
-                console.log(e.target.files);
                 handleLossPhotosChange(e);
               }}
             />
@@ -269,8 +244,9 @@ export default function RecieveDonations() {
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
           <PillButton
-            label="Enviar solicitud de fondos"
+            label={submitting ? "Enviando..." : "Enviar solicitud de fondos"}
             action={handleSubmit}
+            submitting={submitting}
           ></PillButton>
         </div>
       </section>

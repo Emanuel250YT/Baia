@@ -14,7 +14,7 @@ export default function Home() {
         <Image src="/success.png" width={72} height={72} alt="" />
 
         <div className="flex flex-col gap-4 text-white text-[18px]">
-          <p>🎉 ¡Felicidades! Validaste correctamente el pedido de Julián.</p>
+          <p>🎉 ¡Felicidades! Validaste correctamente el pedido.</p>
 
           <p>🙌 Gracias por ser parte de esta red de ayuda y apoyo.</p>
         </div>

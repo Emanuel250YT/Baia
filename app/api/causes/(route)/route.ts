@@ -155,7 +155,7 @@ export async function GET(req: NextRequest) {
     //@ts-ignore
     if (priorityValue.sort) {
       //@ts-ignore
-      paginationConfiguration.short = priorityValue.sort
+      paginationConfiguration.sort = priorityValue.sort
 
     }
     //@ts-ignore
@@ -169,23 +169,32 @@ export async function GET(req: NextRequest) {
 
 
 
-    const dbCauses = await CauseModel.paginate(query, paginationConfiguration)
 
-    if (!dbCauses.docs) return new APIResponse({
-      body: {},
-      code: APICodes[500],
-      message: APIMessages.InternalServerError,
-      status: APIStatus.InternalServerError
-    }).response()
 
-    return new APIResponse({
-      body: dbCauses.docs.map(dbCause => {
-        return sanitizeModel(dbCause)
-      }),
-      code: APICodes[200],
-      message: APIMessages.OK,
-      status: APIStatus.OK
-    }).response()
+
 
   }
+
+  query = { ...query, $expr: { $lt: ["$funds", "$fundsLimit"] } }
+
+
+  const dbCauses = await CauseModel.paginate(query, paginationConfiguration)
+
+
+
+  if (!dbCauses.docs) return new APIResponse({
+    body: {},
+    code: APICodes[500],
+    message: APIMessages.InternalServerError,
+    status: APIStatus.InternalServerError
+  }).response()
+
+  return new APIResponse({
+    body: dbCauses.docs.map(dbCause => {
+      return sanitizeModel(dbCause)
+    }),
+    code: APICodes[200],
+    message: APIMessages.OK,
+    status: APIStatus.OK
+  }).response()
 }

@@ -4,6 +4,7 @@ import PillButton from "@/components/Buttons/PillButton";
 import { PayBlock } from "@/components/Pay";
 import { SignIn } from "@/components/SignIn";
 import { VerifyBlock } from "@/components/Verify";
+import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 
 export default function Home() {
@@ -20,13 +21,19 @@ export default function Home() {
         <div className="flex flex-col gap-y-4">
           <PillButton label="Donar" link="/donate"></PillButton>
 
-          <PillButton label="Recibir donaciones" link="/recieve-donations"></PillButton>
+          <PillButton label="Mis peticiones" link="/requests"></PillButton>
         </div>
 
-        <button className="text-gray-700 text-[18px] underline">
+        <button className="text-gray-700 text-[18px] underline" onClick={() => signOut()}>
           Cerrar sesión
         </button>
 
+        <button className="text-gray-700 text-[18px] underline" onClick={() => signIn("worldcoin")}>
+          Iniciar sesión
+        </button>
+
+        {/* <PayBlock></PayBlock> */}
+        {/* <VerifyBlock validation="4977ba1c-1d73-4756-82ef-0541ebb3f92d" wallet="0x427cc9d8e489287c221d4c75edd446723ee0e1a0"></VerifyBlock> */}
         {/* <div className="flex flex-col gap-y-4">
           <PillButton label="Iniciar sesión"></PillButton>
         </div> */}

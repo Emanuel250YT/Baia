@@ -15,7 +15,7 @@ export default function SuccessDonation() {
 
         <div className="flex flex-col gap-4 text-white text-[16px] text-center">
           <p>
-            ✅ Solicitud enviada con éxito Nuestro algoritmo analizará tu caso y
+            ✅ Solicitud enviada con éxito. Nuestro algoritmo analizará tu caso y
             estimará el costo para reponer tus pérdidas. Pronto tu solicitud
             estará disponible para recibir apoyo de la comunidad.
           </p>
@@ -25,7 +25,7 @@ export default function SuccessDonation() {
       <section className="relative w-[90%] mx-auto px-6 flex flex-col gap-y-6">
         <PillButton
           label="Continuar"
-          link="/donate"
+          link="/requests"
           bgColor="#000000"
           textColor="#FFFFFF"
         ></PillButton>

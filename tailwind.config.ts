@@ -20,6 +20,7 @@ const config: Config = {
       },
       textColor: {
         "brand-darkpurple": "#221044",
+        "brand-purple": "#783BE3",
       },
     },
   },

@@ -1,3 +1,5 @@
+import CauseModel from "@/database/Cause";
+import ValidationModel from "@/database/Validation";
 import {
   verifyCloudProof,
   IVerifyResponse,
@@ -20,16 +22,54 @@ export async function POST(req: NextRequest) {
     action,
     signal
   )) as IVerifyResponse; // Wrapper on this
-  
-  console.log(verifyRes);
+
+
+
+
+
 
   if (verifyRes.success) {
-    // This is where you should perform backend actions if the verification succeeds
-    // Such as, setting a user as "verified" in a database
-    return NextResponse.json({ verifyRes, status: 200 });
+    try {
+
+      if (action == "verify-action") {
+
+        const json = JSON.parse(signal!)
+        const verification = await ValidationModel.findOne({ uuid: json.validation })
+        if (!verification) return NextResponse.json({ verifyRes, status: 400 });
+        const dbCause = await CauseModel.findOne({ uuid: verification.cause })
+
+        if (!dbCause) return NextResponse.json({ verifyRes, status: 400 });
+
+        if (dbCause.wallet == verification.wallet) return NextResponse.json({ verifyRes, status: 400 });
+
+        verification.realValidation = true
+        verification.objetive = dbCause.wallet
+        dbCause.validations = Number(dbCause.validations) + 1
+
+        console.log(json, verification, dbCause)
+        await dbCause.save()
+        await verification.save()
+      }
+
+      if (action == "verify-orb-action") {
+        const signalParsed = JSON.parse(signal!)
+        const dbCause = await CauseModel.findOne({ uuid: signalParsed.uuid })
+        if (!dbCause) return NextResponse.json({ verifyRes, status: 400 });
+        dbCause.verificationLevel = "1"
+        await dbCause.save()
+      }
+
+      return NextResponse.json({ verifyRes, status: 200 });
+
+
+    } catch (error) {
+      if (error) return NextResponse.json({ verifyRes, status: 400 });
+    }
+
+
+    return NextResponse.json({ verifyRes, status: 400 });
   } else {
-    // This is where you should handle errors from the World ID /verify endpoint.
-    // Usually these errors are due to a user having already verified.
+
     return NextResponse.json({ verifyRes, status: 400 });
   }
 }

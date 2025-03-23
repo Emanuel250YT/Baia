@@ -10,7 +10,9 @@ const ValidationSchema: Schema = new Schema<IValidation>({
   images: { type: [String], required: true },
   createdAt: { required: true, type: Number },
   description: { required: true, type: String },
-
+  wallet: { required: true, type: String },
+  realValidation: { required: false, type: Boolean, default: false },
+  objetive: { type: String, default: "" }
 });
 
 ValidationSchema.plugin(mongoosePaginate)

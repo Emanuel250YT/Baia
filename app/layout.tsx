@@ -4,6 +4,7 @@ import "./globals.css";
 import MiniKitProvider from "@/components/minikit-provider";
 import dynamic from "next/dynamic";
 import NextAuthProvider from "@/components/next-auth-provider";
+import { ToastContainer } from "react-toastify";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -29,6 +30,18 @@ export default function RootLayout({
         <NextAuthProvider>
           <ErudaProvider>
             <MiniKitProvider>
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+              />
               {children}
             </MiniKitProvider>
           </ErudaProvider>

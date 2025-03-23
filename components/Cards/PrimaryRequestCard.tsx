@@ -1,17 +1,25 @@
-import { IDisaster } from "@/data/disasters";
+"use client";
+
+import { disasters, IDisaster } from "@/data/disasters";
 import Image from "next/image";
 import PillButton from "../Buttons/PillButton";
 import { ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import useExchangeRate from "@/utils/useExchangeRate";
+import { formatAmount } from "@/utils/FormatAmount";
 
 interface props {
+  id: string;
   createdAt: number;
   place: string;
-  cause?: IDisaster;
+  cause: string;
   collected: number;
   goal: number;
   validations: number;
 }
 export default function PrimaryDonationCard({
+  id,
   createdAt,
   cause,
   collected,
@@ -19,6 +27,27 @@ export default function PrimaryDonationCard({
   place,
   validations,
 }: props) {
+  const { exchangeRate, exchangeRateLoading } = useExchangeRate();
+  const convertUsdToArs = (value: any) => {
+    if (exchangeRateLoading) return "...";
+    if (exchangeRate) return formatAmount(value * exchangeRate);
+  };
+
+  const [progressPercentage] = useState<number>((collected / goal) * 100);
+  const [disaster, setDisaster] = useState<{
+    label: string;
+    emoji: string;
+  } | null>(null);
+
+  const getDisasterInfo = (id: string) => {
+    const disaster = disasters.find((disaster) => disaster.id === id);
+    return disaster ? { label: disaster.label, emoji: disaster.emoji } : null;
+  };
+
+  useEffect(() => {
+    setDisaster(getDisasterInfo(cause));
+  }, [cause]);
+
   return (
     <div className="w-full py-5 border border-gray-300 text-gray-700 rounded-2xl">
       <div className="flex flex-row gap-2.5 px-5">
@@ -29,21 +58,24 @@ export default function PrimaryDonationCard({
               <br />
               📍 {place}
               <br />
-              {cause && (
+              {disaster && (
                 <>
-                  {cause.emoji} {cause.label}
+                  {disaster.emoji} {disaster.label}
+                  <br />
                 </>
               )}
-              <br />
               <span className="font-semibold">
-                💸 Monto requerido: ${goal} ARS
+                💸 Monto requerido: ${convertUsdToArs(goal)} ARS
               </span>
             </p>
           </div>
         </div>
-        <div className="flex flex-nowrap gap-3 items-center justify-center">
+        <Link
+          href={`/damnificated-profile/${id}`}
+          className="flex flex-nowrap gap-3 items-center justify-center"
+        >
           <ChevronRight size={42} color="#783BE3"></ChevronRight>
-        </div>
+        </Link>
       </div>
       <hr className="h-[1px] bg-red-100 my-4" />
 
@@ -54,12 +86,12 @@ export default function PrimaryDonationCard({
             <div className="w-full h-4 bg-gray-200 rounded-full mb-2">
               <div
                 className="h-full bg-purple-gradient rounded-full"
-                style={{ width: `50%` }}
+                style={{ width: `${Math.min(progressPercentage, 100)}%` }}
               />
             </div>
             <div className="flex justify-between text-gray-500 text-xs">
-              <div>{collected} ARS</div>
-              <div>{goal} ARS</div>
+              <div>{convertUsdToArs(collected)} ARS</div>
+              <div>{convertUsdToArs(goal)} ARS</div>
             </div>
           </div>
         </div>
