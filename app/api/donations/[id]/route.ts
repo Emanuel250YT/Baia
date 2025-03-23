@@ -29,7 +29,6 @@ export async function GET(req: NextRequest) {
 
   const page = req.nextUrl.searchParams.get("page");
   const amountPerPage = req.nextUrl.searchParams.get("amountPerPage");
-  const priority = req.nextUrl.searchParams.get("priority");
 
 
   const paginationConfiguration = {

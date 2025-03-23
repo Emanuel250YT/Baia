@@ -28,9 +28,19 @@ export async function GET(req: NextRequest) {
     status: APIStatus.NotFound
   }).response()
 
-  const dbValidation = await ValidationModel.find({
+
+  const page = req.nextUrl.searchParams.get("page");
+  const amountPerPage = req.nextUrl.searchParams.get("amountPerPage");
+
+
+  const paginationConfiguration = {
+    page: page ? parseInt(page) : 1,
+    limit: amountPerPage ? parseInt(amountPerPage) : 10,
+  }
+
+  const dbValidation = await ValidationModel.paginate({
     wallet: id
-  })
+  }, paginationConfiguration)
 
   if (!dbValidation) return new APIResponse({
     body: {},
@@ -40,7 +50,7 @@ export async function GET(req: NextRequest) {
   }).response()
 
   return new APIResponse({
-    body: dbValidation.map(cause => {
+    body: dbValidation.docs.map(cause => {
       return sanitizeModel(cause)
     }),
     code: APICodes[200],
