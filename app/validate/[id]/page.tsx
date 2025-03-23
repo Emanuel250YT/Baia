@@ -19,6 +19,7 @@ import { ICause } from "@/classes/Cause";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { GetWalletSession } from "@/utils/GetWalletSession";
+import { toast } from "react-toastify";
 
 export default function Validate() {
   const router = useRouter();
@@ -31,8 +32,8 @@ export default function Validate() {
   const [comment, setComment] = useState<string>("");
   const [photos, setPhotos] = useState<File[]>([]);
 
-  const [wallet, setWallet] = useState<string>(
-    MiniKit.walletAddress || "0x427cc9d8e489287c221d4c75edd446723ee0e1a0"
+  const [wallet, setWallet] = useState<string | null>(
+    MiniKit.walletAddress
   );
 
   const [handleVerifyResponse, setHandleVerifyResponse] = useState<
@@ -56,18 +57,38 @@ export default function Validate() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    await fetchWallet();
+
+    if(!MiniKit.walletAddress) {
+      toast.error("Debes proporcionar tu Wallet para realizar esta acción.");
+      return;
+    }
+
     setLoading(true);
 
+    
+    if(comment.trim().length <= 0) {
+      toast.error("Debes proporcionar un comentario válido.");
+      return;
+    }
+
+    
+    if(photos.length <= 0) {
+      toast.error("Debes proporcionar al menos una imagen.");
+      return;
+    }
+
     const formData = new FormData();
+
     formData.append("description", comment);
 
-    // Append each photo file to FormData
     photos.forEach((photo) => {
       formData.append("images", photo);
     });
 
     formData.append("cause", id);
-    formData.append("wallet", wallet);
+    formData.append("wallet", MiniKit.walletAddress);
 
     try {
       const response = await fetch("/api/validations", {
@@ -80,7 +101,7 @@ export default function Validate() {
 
         handleVerify(
           data.uuid,
-          wallet
+          MiniKit.walletAddress
         );
         router.push("/success-validation");
       } else {
@@ -176,6 +197,8 @@ export default function Validate() {
         const data = await request.json();
         console.log(data);
         setCause(data.body);
+      } else {
+        router.push("/");
       }
     }
 
@@ -218,7 +241,7 @@ export default function Validate() {
                 height={42}
               ></Image>
               <p className="text-gray-500 text-[15px] text-center">
-                Adjuntar fotos para legitimizar el pedido de Julián e inspirar
+                Adjuntar fotos para legitimizar el pedido de {cause ? cause.owner : "..."} e inspirar
                 más confianza a otros donantes.
               </p>
             </div>

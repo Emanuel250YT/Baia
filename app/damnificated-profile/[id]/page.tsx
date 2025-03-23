@@ -111,7 +111,7 @@ export default function DamnificatedProfile() {
           <Navbar title={`Pedido #00000`}></Navbar>
 
           {/* Profile Section Skeleton */}
-          <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
+          <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
             <div className="flex flex-nowrap gap-3">
               <div className="rounded-full border-[3px] border-transparent bg-gray-200 w-[96px] h-[96px] animate-pulse"></div>
               <div className="flex flex-col gap-1">
@@ -153,7 +153,7 @@ export default function DamnificatedProfile() {
             </div>
           </section>
 
-          <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
+          <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
             <div className="flex flex-col items-center justify-center gap-3 w-full">
               <div className="h-6 w-36 bg-gray-200 rounded animate-pulse self-start"></div>
               <div className="w-full py-5 border border-gray-300 rounded-2xl">
@@ -243,8 +243,8 @@ export default function DamnificatedProfile() {
             <Navbar
               title={`Pedido #${String(cause?.creationIndex).padStart(5, "0")}`}
             />
-            <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
-              <div className="flex flex-nowrap gap-3">
+            <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
+              <div className="w-full flex-1 flex flex-nowrap items-start justify-center gap-3">
                 <Image
                   src={cause.profile}
                   className="aspect-square object-cover rounded-full border-[3px] border-transparent bg-gradient-to-r from-[#783BE3] via-[#6028B5] to-[#783BE3] max-w-[96px] max-h-[96px]"
@@ -255,7 +255,11 @@ export default function DamnificatedProfile() {
                 <div className="flex flex-col gap-1">
                   <h2 className="text-[18px] font-semibold">{cause.owner}</h2>
                   <p className="text-[14px]">
-                    👁️ Verificado con {cause.verificationLevel == "0" ? "dispositivo" : "World ID"}.
+                    👁️ Verificado con{" "}
+                    {cause.verificationLevel == "0"
+                      ? "dispositivo"
+                      : "World ID"}
+                    .
                     <br />
                     📅 Publicado el{" "}
                     {new Date(cause.createdAt).toLocaleDateString("es-ES")}
@@ -288,8 +292,8 @@ export default function DamnificatedProfile() {
               </div>
             </section>
 
-            <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
-              <div className="flex flex-col items-center justify-center gap-3">
+            <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
+              <div className="w-full flex flex-col items-center justify-center gap-3">
                 <Subtitle content={"🤖 Pérdida estimada"} />
                 <div className="w-full py-5 border border-gray-300 text-gray-700 rounded-2xl">
                   <div className="space-y-4 px-5">
@@ -537,7 +541,7 @@ function ItemRow({
 }: ItemRowProps) {
   return (
     <div className="flex items-center justify-between gap-1">
-      <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
+      <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1 capitalize">
         {icon && <span className="text-sm">{icon}</span>}
         <span className="font-medium text-xs">{name}</span>
       </div>
