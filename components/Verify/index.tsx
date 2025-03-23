@@ -143,13 +143,14 @@ export const VerifyCauseDevice = ({ cause }: { cause: string }) => {
   }, []);
 
   return (
-    <div>
-      <h1>Verify Block</h1>
-      <button className="bg-green-500 p-4" onClick={handleVerify}>
-        Test Verify
-      </button>
-      <span>{JSON.stringify(handleVerifyResponse, null, 2)}</span>
-    </div>
+    <button
+      onClick={handleVerify}
+      className={
+        "py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse"
+      }
+    >
+      Verificar
+    </button>
   );
 };
 
@@ -207,12 +208,13 @@ export const VerifyCauseOrb = ({ cause }: { cause: string }) => {
   }, []);
 
   return (
-    <div>
-      <h1>Verify Block</h1>
-      <button className="bg-green-500 p-4" onClick={handleVerify}>
-        Test Verify
-      </button>
-      <span>{JSON.stringify(handleVerifyResponse, null, 2)}</span>
-    </div>
+    <button
+      onClick={handleVerify}
+      className={
+        "py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse"
+      }
+    >
+      Verificar
+    </button>
   );
 };
