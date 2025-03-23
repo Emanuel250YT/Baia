@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import { disasters } from "@/data/disasters";
-import { convertUsdToArs } from "@/utils/ConvertCurrency";
+import useExchangeRate from "@/utils/useExchangeRate";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -28,6 +28,12 @@ export default function PrimaryDonationCard({
   place,
   validations,
 }: props) {
+  const { exchangeRate, exchangeRateLoading } = useExchangeRate();
+  const convertUsdToArs = (value: any) => {
+    if (exchangeRateLoading) return "...";
+    if (exchangeRate) return value * exchangeRate;
+  };
+
   const [progressPercentage] = useState<number>((collected / goal) * 100);
   const [disaster, setDisaster] = useState<{
     label: string;

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { disasters, IDisaster } from "@/data/disasters";
 import Image from "next/image";
@@ -6,7 +6,7 @@ import PillButton from "../Buttons/PillButton";
 import { ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { convertUsdToArs } from "@/utils/ConvertCurrency";
+import useExchangeRate from "@/utils/useExchangeRate";
 
 interface props {
   id: string;
@@ -26,6 +26,12 @@ export default function PrimaryDonationCard({
   place,
   validations,
 }: props) {
+  const { exchangeRate, exchangeRateLoading } = useExchangeRate();
+  const convertUsdToArs = (value: any) => {
+    if (exchangeRateLoading) return "...";
+    if (exchangeRate) return value * exchangeRate;
+  };
+
   const [progressPercentage] = useState<number>((collected / goal) * 100);
   const [disaster, setDisaster] = useState<{
     label: string;
@@ -63,7 +69,10 @@ export default function PrimaryDonationCard({
             </p>
           </div>
         </div>
-        <Link href={`/damnificated-profile/${id}`} className="flex flex-nowrap gap-3 items-center justify-center">
+        <Link
+          href={`/damnificated-profile/${id}`}
+          className="flex flex-nowrap gap-3 items-center justify-center"
+        >
           <ChevronRight size={42} color="#783BE3"></ChevronRight>
         </Link>
       </div>

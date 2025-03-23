@@ -7,7 +7,6 @@ import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
 import { VerifyCauseDevice, VerifyCauseOrb } from "@/components/Verify";
 import { disasters } from "@/data/disasters";
-import { convertUsdToArs } from "@/utils/ConvertCurrency";
 import { GetWalletSession } from "@/utils/GetWalletSession";
 import { MiniKit } from "@worldcoin/minikit-js";
 import Image from "next/image";
@@ -18,11 +17,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check, Shield, X } from "lucide-react";
+import useExchangeRate from "@/utils/useExchangeRate";
 
 export default function DamnificatedProfile() {
   const router = useRouter();
 
   const { id } = useParams<{ id: string }>();
+
+  const { exchangeRate, exchangeRateLoading } = useExchangeRate();
+  const convertUsdToArs = (value: any) => {
+    if (exchangeRateLoading) return "...";
+    if (exchangeRate) return value * exchangeRate;
+  };
 
   const [wallet, setWallet] = useState<string | null>("");
   const [cause, setCause] = useState<ICause | null>(null);
@@ -293,6 +299,7 @@ export default function DamnificatedProfile() {
                             key={index}
                             name={item.name}
                             amount={item.amount}
+                            convertUsdToArs={convertUsdToArs}
                           />
                         ))}
                       </div>
@@ -312,6 +319,7 @@ export default function DamnificatedProfile() {
                             key={index}
                             name={item.name}
                             amount={item.amount}
+                            convertUsdToArs={convertUsdToArs}
                           />
                         ))}
                       </div>
@@ -479,9 +487,11 @@ interface ItemRowProps {
   name: string;
   forPeople?: number;
   amount: number;
+  convertUsdToArs: any;
 }
 
-function ItemRow({ icon, name, forPeople, amount }: ItemRowProps) {
+function ItemRow({ icon, name, forPeople, amount, convertUsdToArs }: ItemRowProps) {
+
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
