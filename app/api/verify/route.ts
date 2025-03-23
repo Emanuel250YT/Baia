@@ -39,6 +39,9 @@ export async function POST(req: NextRequest) {
         const dbCause = await CauseModel.findOne({ uuid: verification.cause })
 
         if (!dbCause) return NextResponse.json({ verifyRes, status: 400 });
+
+        if (dbCause.wallet == verification.wallet) return NextResponse.json({ verifyRes, status: 400 });
+
         verification.realValidation = true
         dbCause.validations = Number(dbCause.validations) + 1
 
