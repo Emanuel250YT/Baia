@@ -22,7 +22,7 @@ export default function Home() {
       <section className="relative w-[90%] mx-auto px-6 flex flex-col gap-y-6">
         <PillButton
           label="Continuar"
-          link="/donate"
+          link="/"
           bgColor="#000000"
           textColor="#FFFFFF"
         ></PillButton>
