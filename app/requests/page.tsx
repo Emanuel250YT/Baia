@@ -61,7 +61,12 @@ export default function Request() {
 
     if (request.status === 200) {
       const data = await request.json();
-      setCauses((prev) => [...prev, ...data.body]);
+      setCauses((prev) => {
+        const newCauses = data.body.filter(
+          (cause: ICause) => !prev.some((c) => c.uuid === cause.uuid)
+        );
+        return [...prev, ...newCauses];
+      });
       setHasMoreCauses(data.body.length > 0);
     }
 
@@ -193,7 +198,7 @@ export default function Request() {
             Conectar wallet <Wallet />
           </button>
         ) : (
-          <div onScroll={handleCausesScroll}>
+          <div onScroll={handleCausesScroll} className="w-full flex-1 flex flex-col flex-nowrap gap-4">
             {!loading &&
               wallet &&
               causes.map((cause, index) => (
