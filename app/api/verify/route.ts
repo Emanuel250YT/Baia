@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
         if (dbCause.wallet == verification.wallet) return NextResponse.json({ verifyRes, status: 400 });
 
         verification.realValidation = true
+        verification.objetive = dbCause.wallet
         dbCause.validations = Number(dbCause.validations) + 1
 
         console.log(json, verification, dbCause)

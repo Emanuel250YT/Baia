@@ -41,7 +41,8 @@ export async function GET(req: NextRequest) {
   }
 
   const dbValidation = await ValidationModel.paginate({
-    wallet: id,
+    objetive: id,
+    realValidation: true
   }, paginationConfiguration)
 
   if (!dbValidation) return new APIResponse({

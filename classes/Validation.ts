@@ -9,7 +9,8 @@ export interface IValidation {
   createdAt: number;
   description: string;
   realValidation: boolean;
-  wallet: string
+  wallet: string;
+  objetive: string;
 }
 
 export const ZValidationCreate = z.object({
