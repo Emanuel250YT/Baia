@@ -5,14 +5,12 @@ import PillButton from "@/components/Buttons/PillButton";
 import PrimaryRequestCard from "@/components/Cards/PrimaryRequestCard";
 import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
-import { disasters } from "@/data/disasters";
 import { formatAmount } from "@/utils/FormatAmount";
 import { GetWalletSession } from "@/utils/GetWalletSession";
 import useExchangeRate from "@/utils/useExchangeRate";
 import { MiniKit } from "@worldcoin/minikit-js";
 import { Wallet } from "lucide-react";
-import Image from "next/image";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type DonationNotification = {
   type: "donation";

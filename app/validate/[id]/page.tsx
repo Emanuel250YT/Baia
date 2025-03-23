@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PillButton from "@/components/Buttons/PillButton";
 import Navbar from "@/components/Navigation/Navbar";
 import Image from "next/image";
 
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Subtitle from "@/components/Text/Subtitle";
 import {
   ISuccessResult,
@@ -60,22 +60,24 @@ export default function Validate() {
 
     await fetchWallet();
 
-    if(!MiniKit.walletAddress) {
-      toast.error("Debes proporcionar tu Wallet para realizar esta acción.");
-      return;
-    }
-
     setLoading(true);
 
+    if(!MiniKit.walletAddress) {
+      toast.error("Debes proporcionar tu Wallet para realizar esta acción.");
+      setLoading(false);
+      return;
+    }
     
     if(comment.trim().length <= 0) {
       toast.error("Debes proporcionar un comentario válido.");
+      setLoading(false);
       return;
     }
 
     
     if(photos.length <= 0) {
       toast.error("Debes proporcionar al menos una imagen.");
+      setLoading(false);
       return;
     }
 
@@ -108,8 +110,7 @@ export default function Validate() {
         return; // handle not success
       }
     } catch (error) {
-      console.error(error);
-      return; // handle catch error
+      return;
     } finally {
       setLoading(false);
     }
