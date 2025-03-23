@@ -11,7 +11,8 @@ const DonationSchema: Schema = new Schema<IDonation>({
   createdAt: { required: true, type: Number },
   wallet: { type: String },
   verified: { type: Boolean, default: false },
-  amount: { type: Number, default: 0 }
+  amount: { type: Number, default: 0 },
+  objetive: { type: String, default: "" }
 });
 
 DonationSchema.plugin(mongoosePaginate)

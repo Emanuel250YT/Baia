@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   }).response()
 
   const dbDonation = await DonationModel.find({
-    wallet: id
+    objetive: id
   })
 
   if (!dbDonation) return new APIResponse({
