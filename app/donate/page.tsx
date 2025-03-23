@@ -4,35 +4,74 @@ import PrimaryDonationCard from "@/components/Cards/PrimaryDonationCard";
 import Navbar from "@/components/Navigation/Navbar";
 import { disasters } from "@/data/disasters";
 import Image from "next/image";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 import { GetAllCauses } from "@/requests/causes/methods";
 import { ICause } from "@/classes/Cause";
 import { PrioritiesKeys } from "@/data/causePriority";
+import { LoaderCircle } from "lucide-react";
 
 export default function Donate() {
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-  const [causes, setCauses] = useState<Array<ICause> | null>(null);
+  const [causes, setCauses] = useState<Array<ICause>>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const limit = 5;
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    async function fetchCauses() {
-      setLoading(true);
-
-      const request = await fetch(
-        `/api/causes?page=1&limit=1${
-          selectedFilter ? `&priority=${selectedFilter}` : ""
-        }`
-      );
-      if (request.status === 200) {
-        const data = await request.json();
-        setCauses(data.body);
-      }
-      setLoading(false);
-    }
-
-    fetchCauses();
+    setCauses([]);
+    setPage(1);
+    loadMoreCauses(1, true);
   }, [selectedFilter]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loadingMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (observerRef.current) observer.observe(observerRef.current);
+
+    return () => observer.disconnect();
+  }, [loadingMore]);
+
+  async function loadMoreCauses(newPage: number, reset: boolean = false) {
+    if (loadingMore) return;
+
+    if (!hasMore) return;
+
+    setLoadingMore(true);
+    const request = await fetch(
+      `/api/causes?page=${newPage}&amountPerPage=${limit}${
+        selectedFilter ? `&priority=${selectedFilter}` : ""
+      }`
+    );
+
+    if (request.status === 200) {
+      const data = await request.json();
+      if (data.body.length > 0) {
+        setHasMore(true);
+      } else setHasMore(false);
+      setCauses((prevCauses) =>
+        reset ? data.body : [...prevCauses, ...data.body]
+      );
+    }
+    setLoading(false);
+    setLoadingMore(false);
+  }
+
+  useEffect(() => {
+    if (page > 1) {
+      loadMoreCauses(page);
+    }
+  }, [page]);
 
   const handleFilterClick = (filter: string) => {
     setSelectedFilter(filter);
@@ -143,20 +182,26 @@ export default function Donate() {
             </div>
           </div>
         ) : causes && causes.length > 0 ? (
-          causes.map((cause) => (
-            <PrimaryDonationCard
-              key={cause.uuid}
-              id={cause.uuid}
-              name={cause.owner}
-              createdAt={cause.createdAt}
-              cause={cause.cause}
-              place={cause.place}
-              image={cause.profile || "/placeholder.png"}
-              collected={cause.funds}
-              goal={cause.fundsLimit}
-              validations={cause.validations}
-            />
-          ))
+          <>
+            {causes.map((cause) => (
+              <PrimaryDonationCard
+                key={cause.uuid}
+                id={cause.uuid}
+                name={cause.owner}
+                createdAt={cause.createdAt}
+                cause={cause.cause}
+                place={cause.place}
+                image={cause.profile || "/placeholder.png"}
+                collected={cause.funds}
+                goal={cause.fundsLimit}
+                validations={cause.validations}
+              />
+            ))}
+            {loadingMore && hasMore && (
+              <p className="w-full flex-1 flex items-center justify-center text-center"><LoaderCircle className="animate-spin" color="#783BE3" /></p>
+            )}
+            <div ref={observerRef} className="w-full h-10" />
+          </>
         ) : (
           <p className="text-center text-gray-500">No hay causas disponibles</p>
         )}
