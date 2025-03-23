@@ -4,6 +4,7 @@ import PillButton from "@/components/Buttons/PillButton";
 import { PayBlock } from "@/components/Pay";
 import { SignIn } from "@/components/SignIn";
 import { VerifyBlock } from "@/components/Verify";
+import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 
 export default function Home() {
@@ -23,8 +24,12 @@ export default function Home() {
           <PillButton label="Mis peticiones" link="/requests"></PillButton>
         </div>
 
-        <button className="text-gray-700 text-[18px] underline">
+        <button className="text-gray-700 text-[18px] underline" onClick={() => signOut()}>
           Cerrar sesión
+        </button>
+
+        <button className="text-gray-700 text-[18px] underline" onClick={() => signIn("worldcoin")}>
+          Iniciar sesión
         </button>
 
         {/* <PayBlock></PayBlock> */}
