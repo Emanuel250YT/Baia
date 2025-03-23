@@ -34,12 +34,14 @@ export async function GET(req: NextRequest) {
   const paginationConfiguration = {
     page: page ? parseInt(page) : 1,
     limit: amountPerPage ? parseInt(amountPerPage) : 10,
+    sort: { createdAt: 1 }
   }
 
 
   const dbDonation = await DonationModel.paginate({
     objetive: id,
-    verified: true
+    verified: true,
+
   }, paginationConfiguration)
 
   if (!dbDonation) return new APIResponse({

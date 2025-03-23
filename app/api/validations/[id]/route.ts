@@ -36,10 +36,12 @@ export async function GET(req: NextRequest) {
   const paginationConfiguration = {
     page: page ? parseInt(page) : 1,
     limit: amountPerPage ? parseInt(amountPerPage) : 10,
+    sort: { createdAt: 1 }
+
   }
 
   const dbValidation = await ValidationModel.paginate({
-    wallet: id
+    wallet: id,
   }, paginationConfiguration)
 
   if (!dbValidation) return new APIResponse({

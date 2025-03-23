@@ -178,7 +178,6 @@ export async function GET(req: NextRequest) {
   query = { ...query, $expr: { $lt: ["$funds", "$fundsLimit"] } }
 
 
-
   const dbCauses = await CauseModel.paginate(query, paginationConfiguration)
 
 
