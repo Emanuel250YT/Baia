@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="bg-brand-purple flex min-h-screen flex-col items-center justify-evenly gap-y-3 text-black text-[22px]">
+    <main className="animate-fade-in bg-brand-purple flex min-h-screen flex-col items-center justify-evenly gap-y-3 text-black text-[22px]">
       <section className="relative w-[90%] mx-auto px-6 flex flex-col items-center gap-9">
         <div className="flex flex-col gap-3 flex-nowrap justify-center items-center">
           <Image src="/logo/light/icon.png" width={48} height={48} alt="" />

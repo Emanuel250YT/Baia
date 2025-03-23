@@ -1,15 +1,20 @@
-"use client"
+"use client";
 
 import PillButton from "@/components/Buttons/PillButton";
 import { PayBlock } from "@/components/Pay";
 import { SignIn } from "@/components/SignIn";
 import { VerifyBlock } from "@/components/Verify";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import Loading from "./loading";
 
 export default function Home() {
+  const { data, status, update } = useSession();
+
+  if(status == "loading") return <Loading />
+
   return (
-    <main className="bg-white flex min-h-screen flex-col items-center justify-evenly gap-y-3 text-black text-[22px]">
+    <main className="animate-fade-in bg-white flex min-h-screen flex-col items-center justify-evenly gap-y-3 text-black text-[22px]">
       <section className="relative w-[90%] mx-auto px-6 flex flex-col items-center gap-2 ">
         <div className="flex gap-2 flex-nowrap justify-center items-center">
           <Image src="/logo/icon.png" width={52} height={52} alt="" />
@@ -24,13 +29,23 @@ export default function Home() {
           <PillButton label="Mis peticiones" link="/requests"></PillButton>
         </div>
 
-        <button className="text-gray-700 text-[18px] underline" onClick={() => signOut()}>
-          Cerrar sesión
-        </button>
-
-        <button className="text-gray-700 text-[18px] underline" onClick={() => signIn("worldcoin")}>
-          Iniciar sesión
-        </button>
+        {status == "unauthenticated" ? (
+          <button
+            className="text-gray-700 text-[18px] underline"
+            onClick={() => signIn("worldcoin")}
+          >
+            Iniciar sesión
+          </button>
+        ) : (
+          status == "authenticated" && (
+            <button
+              className="text-gray-700 text-[18px] underline"
+              onClick={() => signOut()}
+            >
+              Cerrar sesión
+            </button>
+          )
+        )}
 
         {/* <PayBlock></PayBlock> */}
         {/* <VerifyBlock validation="4977ba1c-1d73-4756-82ef-0541ebb3f92d" wallet="0x427cc9d8e489287c221d4c75edd446723ee0e1a0"></VerifyBlock> */}

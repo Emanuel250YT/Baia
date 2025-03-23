@@ -105,7 +105,7 @@ export default function DamnificatedProfile() {
   };
 
   return (
-    <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
+    <main className="animate-fade-in bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
       {loading ? (
         <>
           <Navbar title={`Pedido #00000`}></Navbar>
