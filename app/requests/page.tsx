@@ -6,28 +6,63 @@ import PrimaryRequestCard from "@/components/Cards/PrimaryRequestCard";
 import Navbar from "@/components/Navigation/Navbar";
 import Subtitle from "@/components/Text/Subtitle";
 import { disasters } from "@/data/disasters";
+import { formatAmount } from "@/utils/FormatAmount";
 import { GetWalletSession } from "@/utils/GetWalletSession";
+import useExchangeRate from "@/utils/useExchangeRate";
 import { MiniKit } from "@worldcoin/minikit-js";
 import { Wallet } from "lucide-react";
 import Image from "next/image";
 import { Fragment, useEffect, useState } from "react";
 
+type DonationNotification = {
+  type: "donation";
+  amount: number;
+  createdAt: string;
+};
+
+type ValidationNotification = {
+  type: "validation";
+  validationId: string;
+  createdAt: string;
+};
+
+type Notification = DonationNotification | ValidationNotification;
+
 export default function Request() {
   const [wallet, setWallet] = useState<string | null>("");
   const [causes, setCauses] = useState<Array<ICause>>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [donations, setDonations] = useState<DonationNotification[]>([]);
+  const [validations, setValidations] = useState<ValidationNotification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [causesPage, setCausesPage] = useState<number>(1);
+  const [hasMoreCauses, setHasMoreCauses] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
+  const { exchangeRate, exchangeRateLoading } = useExchangeRate();
+  const convertUsdToArs = (value: any) => {
+    if (exchangeRateLoading) return "...";
+    if (exchangeRate) return formatAmount(value * exchangeRate);
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [page]);
 
   useEffect(() => {
     fetchWallet();
   }, []);
 
   const fetchCauses = async (_wallet: string) => {
-    const request = await fetch(`/api/causes/${_wallet}`);
+    const request = await fetch(
+      `/api/causes/${_wallet}?page=${causesPage}&amountPerPage=5`
+    );
 
     if (request.status === 200) {
       const data = await request.json();
-      console.log(data.body);
-      setCauses(data.body);
+      setCauses((prev) => [...prev, ...data.body]);
+      setHasMoreCauses(data.body.length > 0);
     }
 
     return;
@@ -42,6 +77,70 @@ export default function Request() {
     }
 
     setLoading(false);
+  };
+
+  const fetchNotifications = async () => {
+    await fetchWallet();
+
+    if (!MiniKit.walletAddress) {
+      return;
+    }
+
+    setLoading(true);
+
+    const donationsResponse = await fetch(
+      `/api/donations/${MiniKit.walletAddress}?page=${page}&amountPerPage=10`
+    );
+    if (donationsResponse.status === 200) {
+      const data = await donationsResponse.json();
+      setDonations(
+        data.body.map((donation: any) => ({
+          type: "donation",
+          amount: donation.amount,
+        }))
+      );
+    }
+
+    // Fetch validations data
+    const validationsResponse = await fetch(
+      `/api/validations/${MiniKit.walletAddress}?page=${page}&amountPerPage=10`
+    );
+    if (validationsResponse.status === 200) {
+      const data = await validationsResponse.json();
+      setValidations(
+        data.body.map((validation: any) => ({
+          type: "validation",
+          validationId: validation.validationId,
+        }))
+      );
+    }
+  };
+
+  useEffect(() => {
+    const sortedNotifications = [...donations, ...validations].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    setNotifications(sortedNotifications);
+  }, [donations, validations]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const bottom =
+      e.currentTarget.scrollHeight ===
+      e.currentTarget.scrollTop + e.currentTarget.clientHeight;
+    if (bottom && !loading && hasMore) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handleCausesScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const bottom =
+      e.currentTarget.scrollHeight ===
+      e.currentTarget.scrollTop + e.currentTarget.clientHeight;
+    if (bottom && !loading && hasMore) {
+      setCausesPage((prevPage) => prevPage + 1);
+    }
   };
 
   return (
@@ -85,53 +184,67 @@ export default function Request() {
             </div>
           </div>
         ) : !loading && !wallet ? (
-          <>
-            <button
-              onClick={() => {
-                fetchWallet();
-              }}
-              className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2 disabled:bg-gray-600"
-            >
-              Conectar wallet <Wallet />
-            </button>
-          </>
+          <button
+            onClick={() => {
+              fetchWallet();
+            }}
+            className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2 disabled:bg-gray-600"
+          >
+            Conectar wallet <Wallet />
+          </button>
         ) : (
-          !loading &&
-          wallet &&
-          causes.map((cause, index) => (
-            <PrimaryRequestCard
-              key={index}
-              id={cause.uuid}
-              createdAt={cause.createdAt}
-              cause={cause.cause}
-              place={cause.place}
-              collected={cause.funds}
-              goal={cause.fundsLimit}
-              validations={cause.validations}
-            ></PrimaryRequestCard>
-          ))
+          <div onScroll={handleCausesScroll}>
+            {!loading &&
+              wallet &&
+              causes.map((cause, index) => (
+                <PrimaryRequestCard
+                  key={index}
+                  id={cause.uuid}
+                  createdAt={cause.createdAt}
+                  cause={cause.cause}
+                  place={cause.place}
+                  collected={cause.funds}
+                  goal={cause.fundsLimit}
+                  validations={cause.validations}
+                ></PrimaryRequestCard>
+              ))}
+          </div>
         )}
       </section>
 
-      <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
-        {wallet && (
+      {wallet && (
+        <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
           <PillButton
             label="Iniciar otro pedido"
             link={"/recieve-donations"}
           ></PillButton>
-        )}
-      </section>
+        </section>
+      )}
 
-      <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
+      <section
+        onScroll={handleScroll}
+        className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5"
+      >
         <Subtitle content={"🔔 Novedades"} />
-        <Notification
-          icon={"💰"}
-          label="Recibiste una donación de 100.000$ ARS 🎉"
-        ></Notification>
-        <Notification
-          icon={"💰"}
-          label="Recibiste una donación de 100.000$ ARS 🎉"
-        ></Notification>
+        {notifications.length > 0 ? (
+          notifications.map((notification, index) => (
+            <Notification
+              key={index}
+              icon={notification.type === "donation" ? "💰" : "👍"}
+              label={
+                notification.type === "donation"
+                  ? `Recibiste una donación de ${convertUsdToArs(
+                      notification.amount
+                    )} ARS 🎉`
+                  : `Recibiste una validación`
+              }
+            />
+          ))
+        ) : (
+          <span className="text-gray-700 text-[16px] text-center w-full">
+            No hay notificaciones aún.
+          </span>
+        )}
       </section>
     </main>
   );
@@ -144,13 +257,11 @@ interface NotificationProps {
 
 function Notification({ icon, label }: NotificationProps) {
   return (
-    <div className="w-full px-5 py-4 border border-gray-300 text-gray-700 rounded-2xl flex gap-[5%] text-[20px]">
-      <div className="flex items-center justify-center w-[22.5%]">
-        <span className="bg-brand-purple aspect-square p-2 rounded-full text-[20px]">
-          {icon}
-        </span>
+    <div className="w-full px-5 py-4 border border-gray-300 text-gray-700 rounded-2xl flex gap-3.5 text-[20px]">
+      <div className="bg-brand-purple aspect-square p-2 min-w-[46px] min-h-[46px] rounded-full flex items-center justify-center">
+        <span className="text-[20px]">{icon}</span>
       </div>
-      <div className="flex items-center justify-center text-gray-500 text-xs w-[72.5%]">
+      <div className="flex items-center justify-center text-gray-500 text-xs flex-[2]">
         <span className="text-[15px]">{label}</span>
       </div>
     </div>
