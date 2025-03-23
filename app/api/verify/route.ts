@@ -37,7 +37,11 @@ export async function POST(req: NextRequest) {
         const json = JSON.parse(signal!)
         const verification = await ValidationModel.findOne({ uuid: json.validation })
         if (!verification) return NextResponse.json({ verifyRes, status: 400 });
+        const dbCause = await CauseModel.findOne({ uuid: verification.uuid })
+        if (!dbCause) return NextResponse.json({ verifyRes, status: 400 });
         verification.realValidation = true
+        dbCause.validations = Number(dbCause.validations) + 1
+        await dbCause.save()
         await verification.save()
       }
 
