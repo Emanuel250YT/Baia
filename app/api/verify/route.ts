@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
 
 
 
-  console.log(payload, action, signal)
 
 
   if (verifyRes.success) {
@@ -37,10 +36,16 @@ export async function POST(req: NextRequest) {
         const json = JSON.parse(signal!)
         const verification = await ValidationModel.findOne({ uuid: json.validation })
         if (!verification) return NextResponse.json({ verifyRes, status: 400 });
-        const dbCause = await CauseModel.findOne({ uuid: verification.uuid })
+        const dbCause = await CauseModel.findOne({ uuid: verification.cause })
+
         if (!dbCause) return NextResponse.json({ verifyRes, status: 400 });
+
+        if (dbCause.wallet == verification.wallet) return NextResponse.json({ verifyRes, status: 400 });
+
         verification.realValidation = true
         dbCause.validations = Number(dbCause.validations) + 1
+
+        console.log(json, verification, dbCause)
         await dbCause.save()
         await verification.save()
       }
