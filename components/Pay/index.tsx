@@ -31,7 +31,7 @@ export const sendPayment = async (_wallet: string, _cause: string, _amount: numb
           token_amount: tokenToDecimals(_amount, Tokens.USDCE).toString(),
         },
       ],
-      description: "Watch this is a test",
+      description: "¡Un mundo mejor empieza por vos!",
     };
     if (MiniKit.isInstalled()) {
       return await MiniKit.commandsAsync.pay(payload);
@@ -51,16 +51,17 @@ export const handlePay = async (_wallet: string, _cause: string, _amount: number
   const sendPaymentResponse = await sendPayment(_wallet, _cause, _amount);
   const response = sendPaymentResponse?.finalPayload;
 
-  if (!response) {;
+  if (!response) {
+    ;
     return false;
   }
 
   if (response.status == "success") {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_WEB_BASE_URL}/confirm-payment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ payload: response }),
-      });
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ payload: response }),
+    });
     const payment = await res.json();
     if (payment.success) {
       return true;
