@@ -35,7 +35,7 @@ export default function DamnificatedProfile() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [amount, setAmount] = useState(248);
+  const [amount, setAmount] = useState<number | undefined>(undefined);
 
   const [disaster, setDisaster] = useState<{
     label: string;
@@ -69,10 +69,10 @@ export default function DamnificatedProfile() {
       setWallet(address);
     }
   };
-  
+
   const fetchCauses = async () => {
     if (!id) return;
-    
+
     setLoading(true);
     try {
       const request = await fetch(`/api/causes/cause/${id}`);
@@ -80,16 +80,22 @@ export default function DamnificatedProfile() {
         const data = await request.json();
         setCause(data.body);
         setDisaster(getDisasterInfo(data.body.cause));
-        setPrimaryItems(data.body.detail.filter((item: any) => item.priority === "primary"));
-        setSecondaryItems(data.body.detail.filter((item: any) => item.priority === "secondary"));
-        setPercentage(Math.min((data.body.funds / data.body.fundsLimit) * 100, 100));
+        setPrimaryItems(
+          data.body.detail.filter((item: any) => item.priority === "primary")
+        );
+        setSecondaryItems(
+          data.body.detail.filter((item: any) => item.priority === "secondary")
+        );
+        setPercentage(
+          Math.min((data.body.funds / data.body.fundsLimit) * 100, 100)
+        );
       }
     } catch (error) {
       console.error("Error fetching cause:", error);
     } finally {
       setLoading(false);
     }
-  };  
+  };
 
   const getDisasterInfo = (id: string) => {
     const disaster = disasters.find((disaster) => disaster.id === id);
@@ -435,7 +441,7 @@ export default function DamnificatedProfile() {
 
               <div className="flex items-center gap-3 p-5">
                 <div className="bg-purple-600 w-10 h-10 rounded-full flex items-center justify-center">
-                  <Shield size={20} color="white" />
+                <Image src="/logo/light/icon.png" alt={"Baia logo"} width={20} height={20}></Image>
                 </div>
                 <div>
                   <div className="flex items-center gap-1">
@@ -444,28 +450,31 @@ export default function DamnificatedProfile() {
                       <Check size={12} color="white" />
                     </div>
                   </div>
-                  <span className="text-gray-500 text-sm">1</span>
+                  <span className="text-gray-500 text-sm">:)</span>
                 </div>
               </div>
 
-              <div className="bg-gray-50 p-5 mx-5 rounded-xl">
-                <p className="text-gray-600 mb-2">Doné con Worldcoin</p>
+              <div className="bg-gray-50 p-5 rounded-xl">
+                <p className="text-gray-600 mb-2">Donar con Worldcoin</p>
                 <div className="flex items-center mb-2">
                   <div className="relative flex items-center w-full">
                     <span className="absolute left-3 text-xl font-bold">$</span>
                     <input
                       type="number"
                       value={amount}
-                      onChange={(e) =>
-                        setAmount(Number.parseInt(e.target.value) || 0)
-                      }
+                      placeholder={"15.00"}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        if (!isNaN(value)) {
+                          setAmount(value);
+                        }
+                      }}
                       className="w-full bg-white border border-gray-200 rounded-lg py-2 pl-8 pr-3 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-purple-600"
-                      min="1"
                     />
                   </div>
                 </div>
                 <p className="text-gray-500 text-sm italic">
-                  You can select the currency after this step
+                  Podrás seleccionar la moneda luego de este paso.
                 </p>
               </div>
 
@@ -490,8 +499,13 @@ interface ItemRowProps {
   convertUsdToArs: any;
 }
 
-function ItemRow({ icon, name, forPeople, amount, convertUsdToArs }: ItemRowProps) {
-
+function ItemRow({
+  icon,
+  name,
+  forPeople,
+  amount,
+  convertUsdToArs,
+}: ItemRowProps) {
   return (
     <div className="flex items-center justify-between gap-1">
       <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
