@@ -83,7 +83,7 @@ export default function RecieveDonations() {
 
   return (
     <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
-      <Navbar title="Solicitud de Donaciones" returnTo={"/requests"}></Navbar>
+      <Navbar title="Solicitud de Donaciones"></Navbar>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">

@@ -1,20 +1,24 @@
-import { ArrowLeft } from "lucide-react";
+"use client";
+
+import { ArrowLeft, Router } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface NavbarInterface {
   title: string;
-  returnTo: string;
 }
 
-export default function Navbar({ title, returnTo }: NavbarInterface) {
+export default function Navbar({ title }: NavbarInterface) {
+  const router = useRouter();
+
   return (
     <nav className="bg-brand-purple relative h-[78px] flex flex-nowrap items-center justify-center">
-      <Link href={returnTo} className="text-white absolute left-[23px]">
+      <button onClick={() => router.back()} className="text-white absolute left-[23px]">
         <ArrowLeft
           width={32}
           strokeWidth={3}
         />
-      </Link>
+      </button>
 
       <h1 className="text-white font-semibold whitespace-nowrap text-[18px] max-w-[calc(100vw-120px)] truncate">
         {title}

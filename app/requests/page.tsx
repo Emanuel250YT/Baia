@@ -45,7 +45,7 @@ export default function Request() {
 
   return (
     <main className="bg-white flex min-h-screen flex-col gap-y-5 text-black text-[15px]">
-      <Navbar title="Tus pedidos de ayuda" returnTo={"/"}></Navbar>
+      <Navbar title="Tus pedidos de ayuda"></Navbar>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         {loading && !wallet ? (

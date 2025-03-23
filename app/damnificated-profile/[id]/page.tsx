@@ -15,7 +15,7 @@ import Image from "next/image";
 import { redirect, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function DamnificatedProfile() {
   const router = useRouter();
@@ -99,7 +99,7 @@ export default function DamnificatedProfile() {
     <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
       {loading ? (
         <>
-          <Navbar title={`Pedido #00000`} returnTo={"/donate"}></Navbar>
+          <Navbar title={`Pedido #00000`}></Navbar>
 
           {/* Profile Section Skeleton */}
           <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
@@ -233,7 +233,6 @@ export default function DamnificatedProfile() {
           <>
             <Navbar
               title={`Pedido #${String(cause?.creationIndex).padStart(5, "0")}`}
-              returnTo="/donate"
             />
             <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
               <div className="flex flex-nowrap gap-3">

@@ -38,7 +38,7 @@ export default function Donate() {
 
   return (
     <main className="bg-white flex min-h-screen flex-col gap-y-5 text-black text-[15px]">
-      <Navbar title="Donar" returnTo={"/"}></Navbar>
+      <Navbar title="Donar"></Navbar>
       <section className="max-w-[calc(100vw-46px)] mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="overflow-x-scroll">
           <div className="flex gap-2 pb-2 no-scrollbar">

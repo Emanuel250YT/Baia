@@ -1,16 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PillButton from "@/components/Buttons/PillButton";
 import Navbar from "@/components/Navigation/Navbar";
 import Image from "next/image";
 
 import { redirect, useParams } from "next/navigation";
 import Subtitle from "@/components/Text/Subtitle";
-import { MiniKit } from "@worldcoin/minikit-js";
+import {
+  ISuccessResult,
+  IVerifyResponse,
+  MiniAppVerifyActionErrorPayload,
+  MiniKit,
+  VerificationLevel,
+  VerifyCommandInput,
+} from "@worldcoin/minikit-js";
 import { ICause } from "@/classes/Cause";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
+import { GetWalletSession } from "@/utils/GetWalletSession";
 
 export default function Validate() {
   const router = useRouter();
@@ -22,6 +30,10 @@ export default function Validate() {
 
   const [comment, setComment] = useState<string>("");
   const [photos, setPhotos] = useState<File[]>([]);
+
+  const [wallet, setWallet] = useState<string>(
+    MiniKit.walletAddress || "0x427cc9d8e489287c221d4c75edd446723ee0e1a0"
+  );
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -49,10 +61,7 @@ export default function Validate() {
     });
 
     formData.append("cause", id);
-    formData.append(
-      "wallet",
-      MiniKit.walletAddress || "0x427cc9d8e489287c221d4c75edd446723ee0e1a0"
-    );
+    formData.append("wallet", wallet);
 
     try {
       const response = await fetch("/api/validations", {
@@ -61,7 +70,12 @@ export default function Validate() {
       });
 
       if (response.status === 200) {
-        console.log("success");
+        const data = await response.json();
+
+        handleVerify({
+          validation: data.uuid,
+          wallet: wallet,
+        });
         router.push("/success-validation");
       } else {
         return; // handle not success
@@ -74,31 +88,96 @@ export default function Validate() {
     }
   };
 
+  
+
+  const handleVerify = async ({ validation, wallet }: {validation: string, wallet: string}) => {
+    const verifyPayload: VerifyCommandInput = {
+      action: "verify-action", // This is your action ID from the Developer Portal
+      signal: JSON.stringify({ validation: validation, wallet: wallet }),
+      verification_level:
+        process.env.ENV == "production"
+          ? VerificationLevel.Orb
+          : VerificationLevel.Device, // Orb | Device
+    };
+  
+    const [handleVerifyResponse, setHandleVerifyResponse] = useState<
+      MiniAppVerifyActionErrorPayload | IVerifyResponse | null
+    >(null);
+
+    if (!MiniKit.isInstalled()) {
+      console.warn("Tried to invoke 'verify', but MiniKit is not installed.");
+      return null;
+    }
+
+    const { finalPayload } = await MiniKit.commandsAsync.verify(verifyPayload);
+
+    // no need to verify if command errored
+    if (finalPayload.status === "error") {
+      console.log("Command error");
+      console.log(finalPayload);
+
+      setHandleVerifyResponse(finalPayload);
+      return finalPayload;
+    }
+
+    // Verify the proof in the backend
+    const verifyResponse = await fetch(`/api/verify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        payload: finalPayload as ISuccessResult, // Parses only the fields we need to verify
+        action: verifyPayload.action,
+        signal: verifyPayload.signal, // Optional
+      }),
+    });
+
+    // TODO: Handle Success!
+    const verifyResponseJson = await verifyResponse.json();
+
+    if (verifyResponseJson.status === 200) {
+      console.log("Verification success!");
+      console.log(finalPayload);
+    }
+
+    setHandleVerifyResponse(verifyResponseJson);
+    return verifyResponseJson;
+  };
+
+  const fetchWallet = async (): Promise<void> => {
+    const address = await GetWalletSession();
+    if (address) {
+      setWallet(address);
+    }
+  };
+
   useEffect(() => {
     if (!id) {
       router.push("/");
       return;
     }
+    setLoading(true);
 
-    async function fetchCauses() {
-      setLoading(true);
+    fetchWallet();
 
+    async function fetchCause() {
       const request = await fetch(`/api/causes/cause/${id}`);
       if (request.status === 200) {
         const data = await request.json();
         console.log(data);
         setCause(data.body);
       }
-
-      setLoading(false);
     }
 
-    fetchCauses();
+    fetchCause();
+
+    setLoading(false);
   }, [id]);
 
   return (
     <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
-      <Navbar title="Validar" returnTo={"/donate"}></Navbar>
+      <Navbar title="Validar"></Navbar>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
@@ -169,9 +248,9 @@ export default function Validate() {
         <div className="w-full flex flex-col items-center justify-center gap-3 text-center">
           <PillButton
             label={
-              loading ? "Cargando..." : `Validar pedido de ${cause?.owner}`
+              loading || !cause ? "Cargando..." : `Validar pedido de ${cause?.owner}`
             }
-            submitting={loading}
+            submitting={loading || !cause}
             action={handleSubmit}
           ></PillButton>
         </div>
