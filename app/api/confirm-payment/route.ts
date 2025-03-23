@@ -1,6 +1,10 @@
+import { APIResponse, APICodes, APIMessages, APIStatus } from "@/classes/APIResponses";
 import CauseModel from "@/database/Cause";
 import DonationModel from "@/database/Donation";
+import { authOptions } from "@/lib/authOptions";
+import connectDatabase from "@/lib/connectDatabase";
 import { MiniAppPaymentSuccessPayload } from "@worldcoin/minikit-js";
+import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,6 +13,18 @@ interface IRequestPayload {
 }
 
 export async function POST(req: NextRequest) {
+
+  const session = await getServerSession(authOptions)
+
+  if (!session && process.env.ENV != "development") return new APIResponse({
+    body: {},
+    code: APICodes[401],
+    message: APIMessages.UnAuthorized,
+    status: APIStatus.Unauthorized
+  }).response()
+
+  await connectDatabase()
+
   const { payload } = (await req.json()) as IRequestPayload;
 
 
