@@ -4,6 +4,7 @@ import PillButton from "@/components/Buttons/PillButton";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Loading from "./loading";
+import TeamMembersList from "@/components/Misc/TeamMemberList";
 
 export default function Home() {
   const { status } = useSession();
@@ -61,6 +62,29 @@ export default function Home() {
         {/* <div className="flex flex-col gap-y-4">
           <PillButton label="Iniciar sesión"></PillButton>
         </div> */}
+      </section>
+
+      <section className="relative w-[90%] mx-auto px-6 flex flex-col gap-y-6">
+        <TeamMembersList
+          team={[
+            {
+              name: "Emanuel Guzmán",
+              image: "/devs/emanuel.png",
+              role: "Back-end Developer",
+            },
+            {
+              name: "Arturo Grande",
+              role: "Product Manager / Designer",
+              image: "/devs/arturo.png",
+            },
+            {
+              name: "Lautaro Spiazzi",
+              role: "Front-end Developer",
+              image: "/devs/lautaro.png",
+            },
+          ]}
+          tooltipEnabled={true}
+        />
       </section>
     </main>
   );
