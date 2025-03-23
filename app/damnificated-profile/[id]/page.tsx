@@ -42,6 +42,8 @@ export default function DamnificatedProfile() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [amount, setAmount] = useState<number | undefined>(undefined);
 
+  const [handlingPayment, setHandlingPayment] = useState<boolean>(false);
+
   const [disaster, setDisaster] = useState<{
     label: string;
     emoji: string;
@@ -78,7 +80,7 @@ export default function DamnificatedProfile() {
       }
     } catch (error) {
       toast.error("Ha ocurrido un error buscando la causa solicitada.");
-      router.push("/")
+      router.push("/");
     } finally {
       setLoading(false);
     }
@@ -504,13 +506,24 @@ export default function DamnificatedProfile() {
                   </button>
                 ) : (
                   <button
-                    disabled={!wallet || amount == undefined || amount <= 0}
+                    disabled={
+                      !wallet ||
+                      amount == undefined ||
+                      amount <= 0 ||
+                      handlingPayment
+                    }
                     onClick={() => {
                       if (!wallet || !amount || amount <= 0 || !cause) return;
+                      setHandlingPayment(true);
                       handlePay(wallet, cause.uuid, amount)
-                        .then(() => router.push("/success-donation"))
+                        .then(() => {
+                          router.push("/success-donation");
+                          setHandlingPayment(false);
+                        })
                         .catch(() => {
-                          return;
+                          setHandlingPayment(false);
+                        }).finally(() => {
+                          setHandlingPayment(false);
                         });
                     }}
                     className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2 disabled:bg-gray-600"

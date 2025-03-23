@@ -12,7 +12,7 @@ export default function Home() {
   if (status == "loading") return <Loading />;
 
   return (
-    <main className="animate-fade-in bg-white flex min-h-screen flex-col items-center justify-evenly gap-y-3 text-black text-[22px]">
+    <main className="animate-fade-in bg-white flex min-h-screen flex-col items-center justify-evenly gap-y-3 py-20 text-black text-[22px]">
       <section className="relative w-[90%] mx-auto px-6 flex flex-col items-center gap-2 ">
         <div className="flex gap-2 flex-nowrap justify-center items-center animate-pop-in">
           <Image
