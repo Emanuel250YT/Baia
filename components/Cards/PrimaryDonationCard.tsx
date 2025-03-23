@@ -1,3 +1,5 @@
+"use client"
+
 import { disasters } from "@/data/disasters";
 import { convertUsdToArs } from "@/utils/ConvertCurrency";
 import Image from "next/image";

@@ -1,3 +1,5 @@
+"use client"
+
 import { disasters, IDisaster } from "@/data/disasters";
 import Image from "next/image";
 import PillButton from "../Buttons/PillButton";
