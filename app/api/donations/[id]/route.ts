@@ -27,9 +27,21 @@ export async function GET(req: NextRequest) {
     status: APIStatus.NotFound
   }).response()
 
-  const dbDonation = await DonationModel.find({
-    objetive: id
-  })
+  const page = req.nextUrl.searchParams.get("page");
+  const amountPerPage = req.nextUrl.searchParams.get("amountPerPage");
+  const priority = req.nextUrl.searchParams.get("priority");
+
+
+  const paginationConfiguration = {
+    page: page ? parseInt(page) : 1,
+    limit: amountPerPage ? parseInt(amountPerPage) : 10,
+  }
+
+
+  const dbDonation = await DonationModel.paginate({
+    objetive: id,
+    verified: true
+  }, paginationConfiguration)
 
   if (!dbDonation) return new APIResponse({
     body: {},
@@ -39,7 +51,7 @@ export async function GET(req: NextRequest) {
   }).response()
 
   return new APIResponse({
-    body: dbDonation.map(cause => {
+    body: dbDonation.docs.map(cause => {
       return sanitizeModel(cause)
     }),
     code: APICodes[200],
