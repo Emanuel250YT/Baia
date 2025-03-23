@@ -51,25 +51,24 @@ export const handlePay = async (_wallet: string, _cause: string, _amount: number
   const sendPaymentResponse = await sendPayment(_wallet, _cause, _amount);
   const response = sendPaymentResponse?.finalPayload;
 
-  if (!response) {
-    return;
+  if (!response) {;
+    return false;
   }
 
   if (response.status == "success") {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_WEB_BASE_URL}/confirm-payment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payload: response }),
-    });
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ payload: response }),
+      });
     const payment = await res.json();
     if (payment.success) {
-      // Congrats your payment was successful!
-      console.log("SUCCESS!");
+      return true;
     } else {
-      // Payment failed
-      console.log("FAILED!");
+      return false;
     }
   }
+  return false;
 };
 
 export const PayBlock = () => {

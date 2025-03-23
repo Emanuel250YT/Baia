@@ -441,7 +441,7 @@ export default function DamnificatedProfile() {
               transition={{ type: "spring", stiffness: 120, damping: 15 }}
             >
               <div className="flex justify-between items-center p-5 border-b border-gray-100">
-                <h2 className="text-xl font-bold">World Pay</h2>
+                <h2 className="text-xl font-bold">Donar</h2>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"
@@ -471,7 +471,7 @@ export default function DamnificatedProfile() {
               </div>
 
               <div className="bg-gray-50 p-5 rounded-xl">
-                <p className="text-gray-600 mb-2">Donar con Worldcoin</p>
+                <p className="text-gray-600 mb-2">Cantidad de moneda a donar</p>
                 <div className="flex items-center mb-2">
                   <div className="relative flex items-center w-full">
                     <span className="absolute left-3 text-xl font-bold">$</span>
@@ -512,19 +512,28 @@ export default function DamnificatedProfile() {
                       amount <= 0 ||
                       handlingPayment
                     }
-                    onClick={() => {
+                    onClick={async () => {
                       if (!wallet || !amount || amount <= 0 || !cause) return;
                       setHandlingPayment(true);
-                      handlePay(wallet, cause.uuid, amount)
-                        .then(() => {
+                      try {
+                        const paymentSuccess = await handlePay(
+                          wallet,
+                          cause.uuid,
+                          amount
+                        );
+
+                        if (paymentSuccess) {
                           router.push("/success-donation");
-                          setHandlingPayment(false);
-                        })
-                        .catch(() => {
-                          setHandlingPayment(false);
-                        }).finally(() => {
-                          setHandlingPayment(false);
-                        });
+                          return;
+                        } else {
+                          toast.error("El pago no fue exitoso.")
+                          return;
+                        }
+                      } catch (error) {
+                        toast.error("Error al procesar el pago.")
+                      } finally {
+                        setHandlingPayment(false);
+                      }
                     }}
                     className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2 disabled:bg-gray-600"
                   >
