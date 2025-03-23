@@ -102,7 +102,7 @@ export default function DamnificatedProfile() {
 
     fetchWallet();
     fetchCauses();
-  }, [id, fetchCauses, router]);
+  }, [id]);
 
   const getDisasterInfo = (id: string) => {
     const disaster = disasters.find((disaster) => disaster.id === id);
