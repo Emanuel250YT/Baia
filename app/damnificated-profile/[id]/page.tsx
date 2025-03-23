@@ -67,7 +67,8 @@ export default function DamnificatedProfile() {
 
   const fetchWallet = async (): Promise<void> => {
     const address = await GetWalletSession();
-    if (address && address !== wallet) {
+
+    if (address) {
       setWallet(address);
     }
   };
