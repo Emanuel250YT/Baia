@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Check, Shield, X } from "lucide-react";
+import { ArrowRight, Ban, Check, Wallet, X } from "lucide-react";
 import useExchangeRate from "@/utils/useExchangeRate";
 import { handlePay } from "@/components/Pay";
 
@@ -31,8 +31,8 @@ export default function DamnificatedProfile() {
     if (exchangeRate) return value * exchangeRate;
   };
 
-  const [wallet, setWallet] = useState<string>(
-    MiniKit.walletAddress || "0x427cc9d8e489287c221d4c75edd446723ee0e1a0"
+  const [wallet, setWallet] = useState<string | undefined>(
+    MiniKit.walletAddress || undefined
   );
   const [cause, setCause] = useState<ICause | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -55,14 +55,12 @@ export default function DamnificatedProfile() {
   const [percentage, setPercentage] = useState<number>(0);
 
   useEffect(() => {
-    fetchWallet();
-  }, []);
-
-  useEffect(() => {
     if (!id) {
       router.push("/");
       return;
     }
+
+    fetchWallet();
     fetchCauses();
   }, [id]);
 
@@ -487,13 +485,27 @@ export default function DamnificatedProfile() {
               </div>
 
               <div className="p-5">
-                <button
-                  disabled={amount == undefined || amount <= 0}
-                  onClick={() => handlePay(wallet, cause.uuid, amount ?? 0)}
-                  className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2"
-                >
-                  Siguiente <ArrowRight />
-                </button>
+                {!wallet ? (
+                  <button
+                    onClick={() => {
+                      fetchWallet();
+                    }}
+                    className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2 disabled:bg-gray-600"
+                  >
+                    Conectar wallet <Wallet />
+                  </button>
+                ) : (
+                  <button
+                    disabled={!wallet || amount == undefined || amount <= 0}
+                    onClick={() => {
+                      if (!wallet || !amount || amount <= 0 || !cause) return;
+                      handlePay(wallet, cause.uuid, amount);
+                    }}
+                    className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2 disabled:bg-gray-600"
+                  >
+                    Siguiente <ArrowRight />
+                  </button>
+                )}
               </div>
             </motion.div>
           </motion.div>
