@@ -55,24 +55,6 @@ export default function DamnificatedProfile() {
 
   const [percentage, setPercentage] = useState<number>(0);
 
-  useEffect(() => {
-    if (!id) {
-      router.push("/");
-      return;
-    }
-
-    fetchWallet();
-    fetchCauses();
-  }, [id]);
-
-  const fetchWallet = async (): Promise<void> => {
-    const address = await GetWalletSession();
-
-    if (address) {
-      setWallet(address);
-    }
-  };
-
   const fetchCauses = async () => {
     if (!id) return;
 
@@ -99,6 +81,24 @@ export default function DamnificatedProfile() {
       setLoading(false);
     }
   };
+
+  const fetchWallet = async (): Promise<void> => {
+    const address = await GetWalletSession();
+
+    if (address) {
+      setWallet(address);
+    }
+  };
+
+  useEffect(() => {
+    if (!id) {
+      router.push("/");
+      return;
+    }
+
+    fetchWallet();
+    fetchCauses();
+  }, [id, fetchCauses, router]);
 
   const getDisasterInfo = (id: string) => {
     const disaster = disasters.find((disaster) => disaster.id === id);

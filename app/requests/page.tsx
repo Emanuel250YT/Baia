@@ -44,33 +44,6 @@ export default function Request() {
     if (exchangeRate) return formatAmount(value * exchangeRate);
   };
 
-  useEffect(() => {
-    fetchNotifications();
-  }, [page]);
-
-  useEffect(() => {
-    fetchWallet();
-  }, []);
-
-  const fetchCauses = async (_wallet: string) => {
-    const request = await fetch(
-      `/api/causes/${_wallet}?page=${causesPage}&amountPerPage=5`
-    );
-
-    if (request.status === 200) {
-      const data = await request.json();
-      setCauses((prev) => {
-        const newCauses = data.body.filter(
-          (cause: ICause) => !prev.some((c) => c.uuid === cause.uuid)
-        );
-        return [...prev, ...newCauses];
-      });
-      setHasMoreCauses(data.body.length > 0);
-    }
-
-    return;
-  };
-
   const fetchWallet = async (): Promise<void> => {
     setLoading(true);
     const address = await GetWalletSession();
@@ -117,6 +90,33 @@ export default function Request() {
         }))
       );
     }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications, page]);
+
+  useEffect(() => {
+    fetchWallet();
+  }, [fetchWallet]);
+
+  const fetchCauses = async (_wallet: string) => {
+    const request = await fetch(
+      `/api/causes/${_wallet}?page=${causesPage}&amountPerPage=5`
+    );
+
+    if (request.status === 200) {
+      const data = await request.json();
+      setCauses((prev) => {
+        const newCauses = data.body.filter(
+          (cause: ICause) => !prev.some((c) => c.uuid === cause.uuid)
+        );
+        return [...prev, ...newCauses];
+      });
+      setHasMoreCauses(data.body.length > 0);
+    }
+
+    return;
   };
 
   useEffect(() => {

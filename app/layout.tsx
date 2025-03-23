@@ -5,7 +5,6 @@ import MiniKitProvider from "@/components/minikit-provider";
 import dynamic from "next/dynamic";
 import NextAuthProvider from "@/components/next-auth-provider";
 import { ToastContainer } from "react-toastify";
-import PageTransition from "@/components/PageTransition";
 
 const nunito = Nunito({ subsets: ["latin"] });
 

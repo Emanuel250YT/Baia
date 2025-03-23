@@ -137,7 +137,7 @@ export default function Donate() {
           </div>
         </div>
       </section>
-      <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-3">
+      <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-center gap-3">
         {loading ? (
           <div className="w-full py-5 border border-gray-300 text-gray-700 rounded-2xl">
             <div className="flex flex-col gap-2.5 px-5">

@@ -2,10 +2,30 @@
 
 import PillButton from "@/components/Buttons/PillButton";
 import Image from "next/image";
+import { useState, useEffect } from "react";
+import { useWindowSize } from "react-use";
+import Confetti from "react-confetti"
 
 export default function SuccessDonation() {
+  const { width, height } = useWindowSize();
+  const [isRunning, setIsRunning] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsRunning(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <main className="animate-fade-in bg-brand-purple flex min-h-screen flex-col items-center justify-evenly gap-y-3 text-black text-[22px]">
+      <Confetti
+        width={width}
+        height={height}
+        tweenDuration={3000}
+        numberOfPieces={isRunning ? 200 : 0}
+      />
       <section className="relative w-[90%] mx-auto px-6 flex flex-col items-center gap-9">
         <div className="flex flex-col gap-3 flex-nowrap justify-center items-center">
           <Image src="/logo/light/icon.png" width={48} height={48} alt="" />
@@ -15,8 +35,8 @@ export default function SuccessDonation() {
 
         <div className="flex flex-col gap-4 text-white text-[16px] text-center">
           <p>
-            ✅ Solicitud enviada con éxito. Nuestro algoritmo analizará tu caso y
-            estimará el costo para reponer tus pérdidas. Pronto tu solicitud
+            ✅ Solicitud enviada con éxito. Nuestro algoritmo analizará tu caso
+            y estimará el costo para reponer tus pérdidas. Pronto tu solicitud
             estará disponible para recibir apoyo de la comunidad.
           </p>
           <p>¡Gracias por compartir tu historia, no estás solo! 🖤</p>

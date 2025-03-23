@@ -206,7 +206,7 @@ export default function Validate() {
     fetchCause();
 
     setLoading(false);
-  }, [id]);
+  }, [id, router]);
 
   return (
     <main className="animate-fade-in bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
