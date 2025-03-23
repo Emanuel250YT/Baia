@@ -20,6 +20,7 @@ import { ArrowRight, Ban, Check, Wallet, X } from "lucide-react";
 import useExchangeRate from "@/utils/useExchangeRate";
 import { handlePay } from "@/components/Pay";
 import { formatAmount } from "@/utils/FormatAmount";
+import { toast } from "react-toastify";
 
 export default function DamnificatedProfile() {
   const router = useRouter();
@@ -76,7 +77,8 @@ export default function DamnificatedProfile() {
         );
       }
     } catch (error) {
-      console.error("Error fetching cause:", error);
+      toast.error("Ha ocurrido un error buscando la causa solicitada.");
+      router.push("/")
     } finally {
       setLoading(false);
     }

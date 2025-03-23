@@ -13,6 +13,7 @@ import { MiniKit } from "@worldcoin/minikit-js";
 import Subtitle from "@/components/Text/Subtitle";
 import { GetWalletSession } from "@/utils/GetWalletSession";
 import { redirect, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function RecieveDonations() {
   const router = useRouter();
@@ -50,6 +51,42 @@ export default function RecieveDonations() {
     if(!MiniKit.walletAddress) return;
 
     setSubmitting(true);
+
+    if(!name) {
+      toast.error("Debe especificar su nombre completo.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!location) {
+      toast.error("Debe especificar su nombre ubicación.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!cause) {
+      toast.error("Debe especificar su causa.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!description) {
+      toast.error("Debe especificar una descripción de lo sucedido.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!profilePhoto) {
+      toast.error("Debe colocar una foto de perfil.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!lossPhotos) {
+      toast.error("Debe colocar al menos una foto de lo sucedido.")
+      setSubmitting(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("owner", name);
