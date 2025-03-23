@@ -305,7 +305,7 @@ export default function DamnificatedProfile() {
                           <ItemRow
                             key={index}
                             name={item.name}
-                            amount={item.amount}
+                            amount={item.totalCost}
                             convertUsdToArs={convertUsdToArs}
                           />
                         ))}
@@ -325,7 +325,7 @@ export default function DamnificatedProfile() {
                           <ItemRow
                             key={index}
                             name={item.name}
-                            amount={item.amount}
+                            amount={item.totalCost}
                             convertUsdToArs={convertUsdToArs}
                           />
                         ))}
