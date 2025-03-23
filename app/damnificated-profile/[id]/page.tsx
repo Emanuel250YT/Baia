@@ -16,6 +16,8 @@ import { redirect, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Check, Shield, X } from "lucide-react";
 
 export default function DamnificatedProfile() {
   const router = useRouter();
@@ -25,6 +27,9 @@ export default function DamnificatedProfile() {
   const [wallet, setWallet] = useState<string | null>("");
   const [cause, setCause] = useState<ICause | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [amount, setAmount] = useState(248);
 
   const [disaster, setDisaster] = useState<{
     label: string;
@@ -49,46 +54,36 @@ export default function DamnificatedProfile() {
       router.push("/");
       return;
     }
-
-    async function fetchCauses() {
-      setLoading(true);
-
-      const request = await fetch(`/api/causes/cause/${id}`);
-      if (request.status === 200) {
-        const data = await request.json();
-        console.log(data);
-        setCause(data.body);
-        setDisaster(getDisasterInfo(data.body.cause));
-
-        const primary = data.body.detail.filter(
-          (item: any) => item.priority === "primary"
-        );
-        const secondary = data.body.detail.filter(
-          (item: any) => item.priority === "secondary"
-        );
-        setPrimaryItems(primary);
-        setSecondaryItems(secondary);
-
-        const progressPercentage =
-          (data.body.funds / data.body.fundsLimit) * 100;
-
-        setPercentage(Math.min(progressPercentage, 100));
-      }
-      setLoading(false);
-    }
-
     fetchCauses();
   }, [id]);
 
   const fetchWallet = async (): Promise<void> => {
-    setLoading(true);
     const address = await GetWalletSession();
-    if (address) {
+    if (address && address !== wallet) {
       setWallet(address);
     }
-
-    setLoading(false);
   };
+  
+  const fetchCauses = async () => {
+    if (!id) return;
+    
+    setLoading(true);
+    try {
+      const request = await fetch(`/api/causes/cause/${id}`);
+      if (request.status === 200) {
+        const data = await request.json();
+        setCause(data.body);
+        setDisaster(getDisasterInfo(data.body.cause));
+        setPrimaryItems(data.body.detail.filter((item: any) => item.priority === "primary"));
+        setSecondaryItems(data.body.detail.filter((item: any) => item.priority === "secondary"));
+        setPercentage(Math.min((data.body.funds / data.body.fundsLimit) * 100, 100));
+      }
+    } catch (error) {
+      console.error("Error fetching cause:", error);
+    } finally {
+      setLoading(false);
+    }
+  };  
 
   const getDisasterInfo = (id: string) => {
     const disaster = disasters.find((disaster) => disaster.id === id);
@@ -386,7 +381,11 @@ export default function DamnificatedProfile() {
                 <VerifyCauseOrb cause={cause.uuid} />
               ) : (
                 <div className="flex flex-col flex-nowrap justify-start gap-1 5">
-                  <PillButton label="Donar"></PillButton>
+                  <PillButton
+                    label="Donar"
+                    action={() => setIsOpen(true)}
+                  ></PillButton>
+
                   <PillButton
                     label={`Validar pedido de ${cause.owner}`}
                     link={`/validate/${cause.uuid}`}
@@ -397,6 +396,80 @@ export default function DamnificatedProfile() {
           </>
         )
       )}
+
+      <AnimatePresence mode="wait">
+        {isOpen && (
+          <motion.div
+            key="modal"
+            className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-4"
+            onClick={() => setIsOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white w-full max-w-[320px] rounded-3xl overflow-hidden shadow-xl z-50"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ y: "100vh", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100vh", opacity: 0 }}
+              transition={{ type: "spring", stiffness: 120, damping: 15 }}
+            >
+              <div className="flex justify-between items-center p-5 border-b border-gray-100">
+                <h2 className="text-xl font-bold">World Pay</h2>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3 p-5">
+                <div className="bg-purple-600 w-10 h-10 rounded-full flex items-center justify-center">
+                  <Shield size={20} color="white" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    <span className="font-semibold">Baia</span>
+                    <div className="bg-blue-500 rounded-full p-0.5">
+                      <Check size={12} color="white" />
+                    </div>
+                  </div>
+                  <span className="text-gray-500 text-sm">1</span>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-5 mx-5 rounded-xl">
+                <p className="text-gray-600 mb-2">Doné con Worldcoin</p>
+                <div className="flex items-center mb-2">
+                  <div className="relative flex items-center w-full">
+                    <span className="absolute left-3 text-xl font-bold">$</span>
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(e) =>
+                        setAmount(Number.parseInt(e.target.value) || 0)
+                      }
+                      className="w-full bg-white border border-gray-200 rounded-lg py-2 pl-8 pr-3 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      min="1"
+                    />
+                  </div>
+                </div>
+                <p className="text-gray-500 text-sm italic">
+                  You can select the currency after this step
+                </p>
+              </div>
+
+              <div className="p-5">
+                <button className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2">
+                  Siguiente <ArrowRight />
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
