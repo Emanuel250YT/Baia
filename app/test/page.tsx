@@ -1,5 +1,5 @@
 "use client"
-import { MiniKit, WalletAuthInput } from '@worldcoin/minikit-js'
+import { MiniKit } from '@worldcoin/minikit-js'
 import { useEffect } from 'react'
 
 export default function Page() {

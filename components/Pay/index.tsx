@@ -31,7 +31,7 @@ export const sendPayment = async (_wallet: string, _cause: string, _amount: numb
           token_amount: tokenToDecimals(_amount, Tokens.USDCE).toString(),
         },
       ],
-      description: "Watch this is a test",
+      description: "¡Un mundo mejor empieza por vos!",
     };
     if (MiniKit.isInstalled()) {
       return await MiniKit.commandsAsync.pay(payload);
@@ -52,7 +52,8 @@ export const handlePay = async (_wallet: string, _cause: string, _amount: number
   const response = sendPaymentResponse?.finalPayload;
 
   if (!response) {
-    return;
+    ;
+    return false;
   }
 
   if (response.status == "success") {
@@ -63,13 +64,12 @@ export const handlePay = async (_wallet: string, _cause: string, _amount: number
     });
     const payment = await res.json();
     if (payment.success) {
-      // Congrats your payment was successful!
-      console.log("SUCCESS!");
+      return true;
     } else {
-      // Payment failed
-      console.log("FAILED!");
+      return false;
     }
   }
+  return false;
 };
 
 export const PayBlock = () => {

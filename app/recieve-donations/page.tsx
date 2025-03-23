@@ -13,6 +13,7 @@ import { MiniKit } from "@worldcoin/minikit-js";
 import Subtitle from "@/components/Text/Subtitle";
 import { GetWalletSession } from "@/utils/GetWalletSession";
 import { redirect, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function RecieveDonations() {
   const router = useRouter();
@@ -51,6 +52,42 @@ export default function RecieveDonations() {
 
     setSubmitting(true);
 
+    if(!name) {
+      toast.error("Debe especificar su nombre completo.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!location) {
+      toast.error("Debe especificar su nombre ubicación.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!cause) {
+      toast.error("Debe especificar su causa.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!description) {
+      toast.error("Debe especificar una descripción de lo sucedido.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!profilePhoto) {
+      toast.error("Debe colocar una foto de perfil.")
+      setSubmitting(false);
+      return;
+    }
+
+    if(!lossPhotos) {
+      toast.error("Debe colocar al menos una foto de lo sucedido.")
+      setSubmitting(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("owner", name);
     formData.append("place", location);
@@ -83,7 +120,7 @@ export default function RecieveDonations() {
   }, []);
 
   return (
-    <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
+    <main className="animate-fade-in bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
       <Navbar title="Solicitud de Donaciones"></Navbar>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">

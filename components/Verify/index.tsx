@@ -15,16 +15,21 @@ export type VerifyCommandInput = {
   verification_level?: VerificationLevel; // Default: Orb
 };
 
-
-
-export const VerifyBlock = ({ validation, wallet }: { validation: string, wallet: string }) => {
-
+export const VerifyBlock = ({
+  validation,
+  wallet,
+}: {
+  validation: string;
+  wallet: string;
+}) => {
   const verifyPayload: VerifyCommandInput = {
     action: "verify-action", // This is your action ID from the Developer Portal
     signal: JSON.stringify({ validation: validation, wallet: wallet }),
-    verification_level: process.env.ENV == "production" ? VerificationLevel.Orb : VerificationLevel.Device, // Orb | Device
+    verification_level:
+      process.env.ENV == "production"
+        ? VerificationLevel.Orb
+        : VerificationLevel.Device, // Orb | Device
   };
-
 
   const [handleVerifyResponse, setHandleVerifyResponse] = useState<
     MiniAppVerifyActionErrorPayload | IVerifyResponse | null
@@ -73,26 +78,24 @@ export const VerifyBlock = ({ validation, wallet }: { validation: string, wallet
   }, []);
 
   return (
-    <div>
-      <h1>Verify Block</h1>
-      <button className="bg-green-500 p-4" onClick={handleVerify}>
-        Test Verify
-      </button>
-      <span>{JSON.stringify(handleVerifyResponse, null, 2)}</span>
-    </div>
+    <button
+      onClick={handleVerify}
+      className={
+        "text-white py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
+      }
+    >
+      Verificar con World ID
+    </button>
   );
 };
 
-
 export const VerifyCauseDevice = ({ cause }: { cause: string }) => {
-
   const verifyPayload: VerifyCommandInput = {
     action: "verify-orb-action", // This is your action ID from the Developer Portal
     signal: JSON.stringify({ cause: cause, level: "0" }),
     verification_level: VerificationLevel.Device, // Orb | Device
   };
 
-
   const [handleVerifyResponse, setHandleVerifyResponse] = useState<
     MiniAppVerifyActionErrorPayload | IVerifyResponse | null
   >(null);
@@ -140,26 +143,24 @@ export const VerifyCauseDevice = ({ cause }: { cause: string }) => {
   }, []);
 
   return (
-    <div>
-      <h1>Verify Block</h1>
-      <button className="bg-green-500 p-4" onClick={handleVerify}>
-        Test Verify
-      </button>
-      <span>{JSON.stringify(handleVerifyResponse, null, 2)}</span>
-    </div>
+    <button
+      onClick={handleVerify}
+      className={
+        "text-white py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
+      }
+    >
+      Verificar con World ID
+    </button>
   );
 };
 
-
 export const VerifyCauseOrb = ({ cause }: { cause: string }) => {
-
   const verifyPayload: VerifyCommandInput = {
     action: "verify-orb-action", // This is your action ID from the Developer Portal
     signal: JSON.stringify({ cause: cause, level: "1" }),
     verification_level: VerificationLevel.Orb, // Orb | Device
   };
 
-
   const [handleVerifyResponse, setHandleVerifyResponse] = useState<
     MiniAppVerifyActionErrorPayload | IVerifyResponse | null
   >(null);
@@ -207,16 +208,13 @@ export const VerifyCauseOrb = ({ cause }: { cause: string }) => {
   }, []);
 
   return (
-    <div>
-      <h1>Verify Block</h1>
-      <button className="bg-green-500 p-4" onClick={handleVerify}>
-        Test Verify
-      </button>
-      <span>{JSON.stringify(handleVerifyResponse, null, 2)}</span>
-    </div>
+    <button
+      onClick={handleVerify}
+      className={
+        "text-white py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
+      }
+    >
+      Verificar con World ID
+    </button>
   );
 };
-
-
-
-

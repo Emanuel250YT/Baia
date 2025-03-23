@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PillButton from "@/components/Buttons/PillButton";
 import Navbar from "@/components/Navigation/Navbar";
 import Image from "next/image";
 
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Subtitle from "@/components/Text/Subtitle";
 import {
   ISuccessResult,
@@ -60,22 +60,24 @@ export default function Validate() {
 
     await fetchWallet();
 
-    if(!MiniKit.walletAddress) {
-      toast.error("Debes proporcionar tu Wallet para realizar esta acción.");
-      return;
-    }
-
     setLoading(true);
 
+    if(!MiniKit.walletAddress) {
+      toast.error("Debes proporcionar tu Wallet para realizar esta acción.");
+      setLoading(false);
+      return;
+    }
     
     if(comment.trim().length <= 0) {
       toast.error("Debes proporcionar un comentario válido.");
+      setLoading(false);
       return;
     }
 
     
     if(photos.length <= 0) {
       toast.error("Debes proporcionar al menos una imagen.");
+      setLoading(false);
       return;
     }
 
@@ -108,8 +110,7 @@ export default function Validate() {
         return; // handle not success
       }
     } catch (error) {
-      console.error(error);
-      return; // handle catch error
+      return;
     } finally {
       setLoading(false);
     }
@@ -205,10 +206,10 @@ export default function Validate() {
     fetchCause();
 
     setLoading(false);
-  }, [id]);
+  }, [id, router]);
 
   return (
-    <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
+    <main className="animate-fade-in bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
       <Navbar title="Validar"></Navbar>
 
       <section className="max-w-[calc(100vw-46px)] w-full mx-auto flex flex-wrap justify-start gap-1.5">

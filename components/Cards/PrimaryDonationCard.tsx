@@ -80,7 +80,7 @@ export default function PrimaryDonationCard({
           </div>
           <Link
             href={`/damnificated-profile/${id}`}
-            className="bg-purple-gradient text-center rounded-full px-3 py-1.5 text-white"
+            className="bg-purple-gradient text-center rounded-full px-3 py-1.5 text-white hover:opacity-90 hover:translate-y-[2px] duration-100"
           >
             Donar
           </Link>

@@ -20,6 +20,7 @@ import { ArrowRight, Ban, Check, Wallet, X } from "lucide-react";
 import useExchangeRate from "@/utils/useExchangeRate";
 import { handlePay } from "@/components/Pay";
 import { formatAmount } from "@/utils/FormatAmount";
+import { toast } from "react-toastify";
 
 export default function DamnificatedProfile() {
   const router = useRouter();
@@ -41,6 +42,8 @@ export default function DamnificatedProfile() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [amount, setAmount] = useState<number | undefined>(undefined);
 
+  const [handlingPayment, setHandlingPayment] = useState<boolean>(false);
+
   const [disaster, setDisaster] = useState<{
     label: string;
     emoji: string;
@@ -54,23 +57,6 @@ export default function DamnificatedProfile() {
   >([]);
 
   const [percentage, setPercentage] = useState<number>(0);
-
-  useEffect(() => {
-    if (!id) {
-      router.push("/");
-      return;
-    }
-
-    fetchWallet();
-    fetchCauses();
-  }, [id]);
-
-  const fetchWallet = async (): Promise<void> => {
-    const address = await GetWalletSession();
-    if (address && address !== wallet) {
-      setWallet(address);
-    }
-  };
 
   const fetchCauses = async () => {
     if (!id) return;
@@ -93,11 +79,30 @@ export default function DamnificatedProfile() {
         );
       }
     } catch (error) {
-      console.error("Error fetching cause:", error);
+      toast.error("Ha ocurrido un error buscando la causa solicitada.");
+      router.push("/");
     } finally {
       setLoading(false);
     }
   };
+
+  const fetchWallet = async (): Promise<void> => {
+    const address = await GetWalletSession();
+
+    if (address) {
+      setWallet(address);
+    }
+  };
+
+  useEffect(() => {
+    if (!id) {
+      router.push("/");
+      return;
+    }
+
+    fetchWallet();
+    fetchCauses();
+  }, [id]);
 
   const getDisasterInfo = (id: string) => {
     const disaster = disasters.find((disaster) => disaster.id === id);
@@ -105,7 +110,7 @@ export default function DamnificatedProfile() {
   };
 
   return (
-    <main className="bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
+    <main className="animate-fade-in bg-white flex min-h-screen flex-col gap-y-5 pb-4 text-black text-[15px]">
       {loading ? (
         <>
           <Navbar title={`Pedido #00000`}></Navbar>
@@ -436,7 +441,7 @@ export default function DamnificatedProfile() {
               transition={{ type: "spring", stiffness: 120, damping: 15 }}
             >
               <div className="flex justify-between items-center p-5 border-b border-gray-100">
-                <h2 className="text-xl font-bold">World Pay</h2>
+                <h2 className="text-xl font-bold">Donar</h2>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"
@@ -466,7 +471,7 @@ export default function DamnificatedProfile() {
               </div>
 
               <div className="bg-gray-50 p-5 rounded-xl">
-                <p className="text-gray-600 mb-2">Donar con Worldcoin</p>
+                <p className="text-gray-600 mb-2">Cantidad de moneda a donar</p>
                 <div className="flex items-center mb-2">
                   <div className="relative flex items-center w-full">
                     <span className="absolute left-3 text-xl font-bold">$</span>
@@ -501,14 +506,34 @@ export default function DamnificatedProfile() {
                   </button>
                 ) : (
                   <button
-                    disabled={!wallet || amount == undefined || amount <= 0}
-                    onClick={() => {
+                    disabled={
+                      !wallet ||
+                      amount == undefined ||
+                      amount <= 0 ||
+                      handlingPayment
+                    }
+                    onClick={async () => {
                       if (!wallet || !amount || amount <= 0 || !cause) return;
-                      handlePay(wallet, cause.uuid, amount)
-                        .then(() => router.push("/success-donation"))
-                        .catch(() => {
+                      setHandlingPayment(true);
+                      try {
+                        const paymentSuccess = await handlePay(
+                          wallet,
+                          cause.uuid,
+                          amount
+                        );
+
+                        if (paymentSuccess) {
+                          router.push("/success-donation");
                           return;
-                        });
+                        } else {
+                          toast.error("El pago no fue exitoso.")
+                          return;
+                        }
+                      } catch (error) {
+                        toast.error("Error al procesar el pago.")
+                      } finally {
+                        setHandlingPayment(false);
+                      }
                     }}
                     className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2 disabled:bg-gray-600"
                   >

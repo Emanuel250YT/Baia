@@ -24,7 +24,6 @@ export const GetWalletSession = async (): Promise<string | null> => {
         });
 
       if (finalPayload.status === "error") {
-        console.error("Error en la autenticación de la wallet.");
         return null;
       }
 
@@ -37,13 +36,11 @@ export const GetWalletSession = async (): Promise<string | null> => {
       });
 
       if (!response.ok) {
-        console.error("Fallo al completar la autenticación en el servidor.");
         return null;
       }
 
       return finalPayload.address || null;
     } catch (error) {
-      console.error("Error al obtener la dirección de la wallet:", error);
       return null;
     }
   } else return MiniKit.walletAddress;
