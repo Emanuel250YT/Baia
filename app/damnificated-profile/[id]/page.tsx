@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check, Shield, X } from "lucide-react";
 import useExchangeRate from "@/utils/useExchangeRate";
+import { handlePay } from "@/components/Pay";
 
 export default function DamnificatedProfile() {
   const router = useRouter();
@@ -30,7 +31,9 @@ export default function DamnificatedProfile() {
     if (exchangeRate) return value * exchangeRate;
   };
 
-  const [wallet, setWallet] = useState<string | null>("");
+  const [wallet, setWallet] = useState<string>(
+    MiniKit.walletAddress || "0x427cc9d8e489287c221d4c75edd446723ee0e1a0"
+  );
   const [cause, setCause] = useState<ICause | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -412,7 +415,7 @@ export default function DamnificatedProfile() {
       )}
 
       <AnimatePresence mode="wait">
-        {isOpen && (
+        {isOpen && cause && (
           <motion.div
             key="modal"
             className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-4"
@@ -441,7 +444,12 @@ export default function DamnificatedProfile() {
 
               <div className="flex items-center gap-3 p-5">
                 <div className="bg-purple-600 w-10 h-10 rounded-full flex items-center justify-center">
-                <Image src="/logo/light/icon.png" alt={"Baia logo"} width={20} height={20}></Image>
+                  <Image
+                    src="/logo/light/icon.png"
+                    alt={"Baia logo"}
+                    width={20}
+                    height={20}
+                  ></Image>
                 </div>
                 <div>
                   <div className="flex items-center gap-1">
@@ -479,7 +487,11 @@ export default function DamnificatedProfile() {
               </div>
 
               <div className="p-5">
-                <button className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2">
+                <button
+                  disabled={amount == undefined || amount <= 0}
+                  onClick={() => handlePay(wallet, cause.uuid, amount ?? 0)}
+                  className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2"
+                >
                   Siguiente <ArrowRight />
                 </button>
               </div>
@@ -511,11 +523,6 @@ function ItemRow({
       <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
         {icon && <span className="text-sm">{icon}</span>}
         <span className="font-medium text-xs">{name}</span>
-        {/* {forPeople && (
-          <span className="ml-0.5 bg-blue-100 text-blue-800 border border-blue-200 text-[10px] px-1 py-0.5 rounded-full whitespace-nowrap">
-            👥 {forPeople}
-          </span>
-        )} */}
       </div>
       <div className="bg-black text-white px-2 py-1 rounded-full flex items-center text-xs whitespace-nowrap">
         <span className="text-amber-400 mr-0.5">💰</span>$
