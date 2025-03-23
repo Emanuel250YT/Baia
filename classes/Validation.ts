@@ -8,7 +8,7 @@ export interface IValidation {
   images: string[];
   createdAt: number;
   description: string;
-  realValidation: string;
+  realValidation: boolean;
   wallet: string
 }
 

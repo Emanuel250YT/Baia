@@ -1,4 +1,5 @@
 import CauseModel from "@/database/Cause";
+import ValidationModel from "@/database/Validation";
 import {
   verifyCloudProof,
   IVerifyResponse,
@@ -24,14 +25,33 @@ export async function POST(req: NextRequest) {
 
 
 
+
+  console.log(payload, action, signal)
+
+
   if (verifyRes.success) {
     try {
-      const signalParsed = JSON.parse(signal!)
-      const dbCause = await CauseModel.findOne({ uuid: signalParsed.uuid })
-      if (!dbCause) return NextResponse.json({ verifyRes, status: 400 });
-      dbCause.verificationLevel = "1"
-      await dbCause.save()
+
+      if (action == "verify-action") {
+
+        const json = JSON.parse(signal!)
+        const verification = await ValidationModel.findOne({ uuid: json.validation })
+        if (!verification) return NextResponse.json({ verifyRes, status: 400 });
+        verification.realValidation = true
+        await verification.save()
+      }
+
+      if (action == "verify-orb-action") {
+        const signalParsed = JSON.parse(signal!)
+        const dbCause = await CauseModel.findOne({ uuid: signalParsed.uuid })
+        if (!dbCause) return NextResponse.json({ verifyRes, status: 400 });
+        dbCause.verificationLevel = "1"
+        await dbCause.save()
+      }
+
       return NextResponse.json({ verifyRes, status: 200 });
+
+
     } catch (error) {
       if (error) return NextResponse.json({ verifyRes, status: 400 });
     }

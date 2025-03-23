@@ -28,6 +28,7 @@ export default function Home() {
         </button>
 
         <PayBlock></PayBlock>
+        <VerifyBlock validation="4977ba1c-1d73-4756-82ef-0541ebb3f92d" wallet="0x427cc9d8e489287c221d4c75edd446723ee0e1a0"></VerifyBlock>
         {/* <div className="flex flex-col gap-y-4">
           <PillButton label="Iniciar sesión"></PillButton>
         </div> */}
