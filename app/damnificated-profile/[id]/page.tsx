@@ -15,8 +15,12 @@ import Image from "next/image";
 import { redirect, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { useRouter } from "next/router";
+
 export default function DamnificatedProfile() {
-  const { id } = useParams();
+  const router = useRouter();
+
+  const { id } = useParams<{ id: string }>();
 
   const [wallet, setWallet] = useState<string | null>("");
   const [cause, setCause] = useState<ICause | null>(null);
@@ -42,7 +46,8 @@ export default function DamnificatedProfile() {
 
   useEffect(() => {
     if (!id) {
-      return redirect("/");
+      router.push("/");
+      return;
     }
 
     async function fetchCauses() {
@@ -84,7 +89,6 @@ export default function DamnificatedProfile() {
 
     setLoading(false);
   };
-
 
   const getDisasterInfo = (id: string) => {
     const disaster = disasters.find((disaster) => disaster.id === id);
@@ -386,6 +390,7 @@ export default function DamnificatedProfile() {
                   <PillButton label="Donar"></PillButton>
                   <PillButton
                     label={`Validar pedido de ${cause.owner}`}
+                    link={`/validate/${cause.uuid}`}
                   ></PillButton>
                 </div>
               )}
@@ -417,7 +422,8 @@ function ItemRow({ icon, name, forPeople, amount }: ItemRowProps) {
         )} */}
       </div>
       <div className="bg-black text-white px-2 py-1 rounded-full flex items-center text-xs whitespace-nowrap">
-        <span className="text-amber-400 mr-0.5">💰</span>${convertUsdToArs(amount)}
+        <span className="text-amber-400 mr-0.5">💰</span>$
+        {convertUsdToArs(amount)}
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Link from "next/link";
 import { LoaderCircle } from "lucide-react";
 
@@ -19,29 +18,17 @@ export default function PillButton({
   link,
   action,
 }: PillButtonInterface) {
-  const [isSubmitting, setIsSubmitting] = useState(submitting);
-
-  const handleClick = async (e: React.FormEvent) => {
-    if (!action) return;
-    setIsSubmitting(true);
-    try {
-      await action(e);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const styleClasses =
-    "py-3 rounded-2xl text-center w-full flex-1 text-[20px] font-semibold flex items-center justify-center gap-2 transition duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse";
+    "py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse";
 
   const buttonStyles = {
-    backgroundColor: isSubmitting ? "#8B56E8" : bgColor || "#783BE3", 
+    backgroundColor: submitting ? "#8B56E8" : bgColor || "#783BE3",
     color: textColor || "#FFFFFF",
   };
 
   const content = (
     <>
-      {isSubmitting && <LoaderCircle className="animate-spin" />}
+      {submitting && <LoaderCircle className="animate-spin" />}
       {label}
     </>
   );
@@ -49,18 +36,14 @@ export default function PillButton({
   return action ? (
     <button
       style={buttonStyles}
-      onClick={handleClick}
+      onClick={action}
       className={styleClasses}
-      disabled={isSubmitting}
+      disabled={submitting}
     >
       {content}
     </button>
   ) : (
-    <Link
-      href={link || "/"}
-      style={buttonStyles}
-      className={styleClasses}
-    >
+    <Link href={link || "/"} style={buttonStyles} className={styleClasses}>
       {content}
     </Link>
   );

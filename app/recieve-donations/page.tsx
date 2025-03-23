@@ -214,7 +214,6 @@ export default function RecieveDonations() {
               multiple
               className="hidden"
               onChange={(e) => {
-                console.log(e.target.files);
                 handleLossPhotosChange(e);
               }}
             />
