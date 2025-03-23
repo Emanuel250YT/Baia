@@ -1,6 +1,7 @@
 "use client";
 
 import { disasters } from "@/data/disasters";
+import { formatAmount } from "@/utils/FormatAmount";
 import useExchangeRate from "@/utils/useExchangeRate";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,7 +32,7 @@ export default function PrimaryDonationCard({
   const { exchangeRate, exchangeRateLoading } = useExchangeRate();
   const convertUsdToArs = (value: any) => {
     if (exchangeRateLoading) return "...";
-    if (exchangeRate) return value * exchangeRate;
+    if (exchangeRate) return formatAmount(value * exchangeRate);
   };
 
   const [progressPercentage] = useState<number>((collected / goal) * 100);

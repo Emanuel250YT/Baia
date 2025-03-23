@@ -19,6 +19,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Ban, Check, Wallet, X } from "lucide-react";
 import useExchangeRate from "@/utils/useExchangeRate";
 import { handlePay } from "@/components/Pay";
+import { formatAmount } from "@/utils/FormatAmount";
 
 export default function DamnificatedProfile() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function DamnificatedProfile() {
   const { exchangeRate, exchangeRateLoading } = useExchangeRate();
   const convertUsdToArs = (value: any) => {
     if (exchangeRateLoading) return "...";
-    if (exchangeRate) return value * exchangeRate;
+    if (exchangeRate) return formatAmount(value * exchangeRate);
   };
 
   const [wallet, setWallet] = useState<string | undefined>(
@@ -254,7 +255,7 @@ export default function DamnificatedProfile() {
                 <div className="flex flex-col gap-1">
                   <h2 className="text-[18px] font-semibold">{cause.owner}</h2>
                   <p className="text-[14px]">
-                    👁️ Verificado con World ID
+                    👁️ Verificado con {cause.verificationLevel == "0" ? "dispositivo" : "World ID"}.
                     <br />
                     📅 Publicado el{" "}
                     {new Date(cause.createdAt).toLocaleDateString("es-ES")}

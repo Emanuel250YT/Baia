@@ -7,6 +7,7 @@ import { ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import useExchangeRate from "@/utils/useExchangeRate";
+import { formatAmount } from "@/utils/FormatAmount";
 
 interface props {
   id: string;
@@ -29,7 +30,7 @@ export default function PrimaryDonationCard({
   const { exchangeRate, exchangeRateLoading } = useExchangeRate();
   const convertUsdToArs = (value: any) => {
     if (exchangeRateLoading) return "...";
-    if (exchangeRate) return value * exchangeRate;
+    if (exchangeRate) return formatAmount(value * exchangeRate);
   };
 
   const [progressPercentage] = useState<number>((collected / goal) * 100);
