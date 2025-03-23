@@ -81,10 +81,10 @@ export const VerifyBlock = ({
     <button
       onClick={handleVerify}
       className={
-        "py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
+        "text-white py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
       }
     >
-      Verificar con WorldID
+      Verificar con World ID
     </button>
   );
 };
@@ -146,10 +146,10 @@ export const VerifyCauseDevice = ({ cause }: { cause: string }) => {
     <button
       onClick={handleVerify}
       className={
-        "py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
+        "text-white py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
       }
     >
-      Verificar con WorldID
+      Verificar con World ID
     </button>
   );
 };
@@ -211,10 +211,10 @@ export const VerifyCauseOrb = ({ cause }: { cause: string }) => {
     <button
       onClick={handleVerify}
       className={
-        "py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
+        "text-white py-3 px-4 rounded-2xl text-center w-full flex-1 text-[19px] font-semibold flex items-center justify-center gap-2 transition bg-brand-purple duration-100 cursor-pointer disabled:cursor-not-allowed disabled:animate-pulse hover:translate-y-[2px] hover:opacity-90"
       }
     >
-      Verificar con WorldID
+      Verificar con World ID
     </button>
   );
 };
