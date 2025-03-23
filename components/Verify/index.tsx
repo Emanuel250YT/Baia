@@ -17,11 +17,11 @@ export type VerifyCommandInput = {
 
 
 
-export const VerifyBlock = (cause: string) => {
+export const VerifyBlock = ({ validation, wallet }: { validation: string, wallet: string }) => {
 
   const verifyPayload: VerifyCommandInput = {
-    action: "validate-action", // This is your action ID from the Developer Portal
-    signal: cause,
+    action: "verify-action", // This is your action ID from the Developer Portal
+    signal: JSON.stringify({ validation: validation, wallet: wallet }),
     verification_level: process.env.ENV == "production" ? VerificationLevel.Orb : VerificationLevel.Device, // Orb | Device
   };
 

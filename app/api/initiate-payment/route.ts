@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     uuid: uuid,
     wallet: body.wallet,
     cause: body.cause,
-    amount: body.amount
+    amount: Number(body.amount)
   })
 
 

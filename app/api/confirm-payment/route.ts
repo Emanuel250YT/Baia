@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
       const cause = await CauseModel.findOne({ uuid: reference.cause })
       if (cause) {
         cause.funds = Number(cause.funds) + reference.amount;
+        await cause.save()
       }
       await reference.save()
       return NextResponse.json({ success: true });
