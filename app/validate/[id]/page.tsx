@@ -35,6 +35,12 @@ export default function Validate() {
     MiniKit.walletAddress || "0x427cc9d8e489287c221d4c75edd446723ee0e1a0"
   );
 
+  const [handleVerifyResponse, setHandleVerifyResponse] = useState<
+    MiniAppVerifyActionErrorPayload | IVerifyResponse | null
+  >(null);
+
+
+
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
   };
@@ -72,10 +78,10 @@ export default function Validate() {
       if (response.status === 200) {
         const data = await response.json();
 
-        handleVerify({
-          validation: data.uuid,
-          wallet: wallet,
-        });
+        handleVerify(
+          data.uuid,
+          wallet
+        );
         router.push("/success-validation");
       } else {
         return; // handle not success
@@ -88,9 +94,9 @@ export default function Validate() {
     }
   };
 
-  
 
-  const handleVerify = async ({ validation, wallet }: {validation: string, wallet: string}) => {
+
+  const handleVerify = async (validation: string, wallet: string) => {
     const verifyPayload: VerifyCommandInput = {
       action: "verify-action", // This is your action ID from the Developer Portal
       signal: JSON.stringify({ validation: validation, wallet: wallet }),
@@ -99,19 +105,12 @@ export default function Validate() {
           ? VerificationLevel.Orb
           : VerificationLevel.Device, // Orb | Device
     };
-  
-    const [handleVerifyResponse, setHandleVerifyResponse] = useState<
-      MiniAppVerifyActionErrorPayload | IVerifyResponse | null
-    >(null);
 
-    if (!MiniKit.isInstalled()) {
-      console.warn("Tried to invoke 'verify', but MiniKit is not installed.");
-      return null;
-    }
+
+
 
     const { finalPayload } = await MiniKit.commandsAsync.verify(verifyPayload);
 
-    // no need to verify if command errored
     if (finalPayload.status === "error") {
       console.log("Command error");
       console.log(finalPayload);
@@ -120,7 +119,6 @@ export default function Validate() {
       return finalPayload;
     }
 
-    // Verify the proof in the backend
     const verifyResponse = await fetch(`/api/verify`, {
       method: "POST",
       headers: {
@@ -133,7 +131,6 @@ export default function Validate() {
       }),
     });
 
-    // TODO: Handle Success!
     const verifyResponseJson = await verifyResponse.json();
 
     if (verifyResponseJson.status === 200) {
@@ -144,6 +141,18 @@ export default function Validate() {
     setHandleVerifyResponse(verifyResponseJson);
     return verifyResponseJson;
   };
+
+
+
+
+
+
+
+
+
+
+
+
 
   const fetchWallet = async (): Promise<void> => {
     const address = await GetWalletSession();
