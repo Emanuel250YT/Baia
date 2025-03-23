@@ -12,9 +12,10 @@ import { disasters } from "@/data/disasters";
 import { MiniKit } from "@worldcoin/minikit-js";
 import Subtitle from "@/components/Text/Subtitle";
 import { GetWalletSession } from "@/utils/GetWalletSession";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export default function RecieveDonations() {
+  const router = useRouter();
   const [name, setName] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   const [cause, setCause] = useState<string>("");
@@ -43,19 +44,19 @@ export default function RecieveDonations() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    await GetWalletSession();
+
+    if(!MiniKit.walletAddress) return;
+
     setSubmitting(true);
-
-    await GetWalletSession()
-
-    console.log("submit");
 
     const formData = new FormData();
     formData.append("owner", name);
     formData.append("place", location);
     formData.append("cause", cause);
     formData.append("description", description);
-    formData.append("wallet", MiniKit.walletAddress || "0x427cc9d8e489287c221d4c75edd446723ee0e1a0");
-
+    formData.append("wallet", MiniKit.walletAddress);
 
     if (profilePhoto) {
       formData.append("profile", profilePhoto);
@@ -67,7 +68,7 @@ export default function RecieveDonations() {
 
     try {
       const response = await CreateCause(formData);
-      redirect("/success-recieve");
+      router.push("/success-recieve");
     } catch (error) {
       return; // handle catch error
     } finally {

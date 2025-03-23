@@ -499,7 +499,11 @@ export default function DamnificatedProfile() {
                     disabled={!wallet || amount == undefined || amount <= 0}
                     onClick={() => {
                       if (!wallet || !amount || amount <= 0 || !cause) return;
-                      handlePay(wallet, cause.uuid, amount);
+                      handlePay(wallet, cause.uuid, amount)
+                        .then(() => router.push("/success-donation"))
+                        .catch(() => {
+                          return;
+                        });
                     }}
                     className="w-full bg-gray-900 text-white py-3 rounded-xl relative overflow-hidden flex flex-row flex-nowrap items-center justify-center gap-2 disabled:bg-gray-600"
                   >
